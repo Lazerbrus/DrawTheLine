@@ -303,6 +303,35 @@ body.light .eg-res-stat{background:rgba(0,0,0,0.03);}
 .var-result b{color:var(--text);}
 .var-eg{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:2px;}
 
+/* Screenshot / Show Results overlay */
+.ss-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:660;align-items:flex-start;justify-content:center;overflow-y:auto;padding:14px;}
+.ss-overlay.show{display:flex;}
+.ss-card{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:28px 24px;max-width:460px;width:100%;margin:auto;text-align:center;transition:background 0.3s,border-color 0.3s;}
+.ss-header{font-family:'Archivo Black',sans-serif;font-size:18px;letter-spacing:-0.5px;margin-bottom:2px;}
+.ss-header .dr{color:var(--red-ui);}.ss-header .th{color:var(--text);}.ss-header .ln{color:var(--blue-ui);}
+.ss-scenario{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.ss-winner{font-family:'Archivo Black',sans-serif;font-size:36px;letter-spacing:-1px;line-height:1;margin-bottom:2px;}
+.ss-winner.red{color:var(--red-ui);}.ss-winner.blue{color:#5c94ff;}.ss-winner.tie{color:var(--gold);}
+.ss-seats{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.ss-map{display:inline-grid;grid-template-columns:repeat(5,38px);grid-template-rows:repeat(10,34px);gap:3px;margin-bottom:14px;}
+.ss-cell{border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black',sans-serif;font-size:12px;color:rgba(255,255,255,0.9);border:3px solid transparent;position:relative;}
+.ss-cell.rv{background:var(--rv-bg);}.ss-cell.bv{background:var(--bv-bg);}
+.ss-cell .ss-dbadge{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+.ss-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.ss-stat{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:8px 6px;}
+body.light .ss-stat{background:rgba(0,0,0,0.03);}
+.ss-stat-num{font-family:'Archivo Black',sans-serif;font-size:20px;line-height:1;}
+.ss-stat-label{font-size:9px;color:var(--muted);margin-top:2px;}
+.ss-districts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+.ss-dist{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;min-width:70px;}
+body.light .ss-dist{background:rgba(0,0,0,0.03);}
+.ss-dist-name{font-size:10px;font-weight:800;margin-bottom:2px;}
+.ss-dist-votes{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.ss-dist-win{font-size:11px;font-weight:800;}
+.ss-dist-win.red{color:var(--red-ui);}.ss-dist-win.blue{color:#5c94ff;}
+.ss-eg{font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:10px;padding:6px 10px;border-radius:6px;display:inline-block;}
+.ss-footer{font-size:9px;color:var(--muted);margin-bottom:12px;}
+.ss-close-row{display:flex;gap:7px;justify-content:center;}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:900;}
 .eg-tip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:12px;line-height:1.65;max-width:220px;z-index:800;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
 .eg-tip.show{display:block;}
@@ -485,7 +514,8 @@ body.light .eg-res-stat{background:rgba(0,0,0,0.03);}
     <div class="close-row">
       <button class="btn-close" onclick="closeResult()">← Keep Drawing</button>
       <button class="btn-close" onclick="resetGrid();closeResult()">↺ Try Again</button>
-      <button class="btn-var" onclick="showVariations()">🗺️ Show Variations</button>
+      <button class="btn-var" onclick="showScreenshotView()">📸 Show Results</button>
+      <button class="btn-var" style="background:linear-gradient(135deg,#9B2BF5,#6a1fb0)" onclick="showVariations()">🗺️ Show Variations</button>
     </div>
   </div>
 </div>
@@ -498,6 +528,24 @@ body.light .eg-res-stat{background:rgba(0,0,0,0.03);}
     <div id="var-content"></div>
     <div style="text-align:center;margin-top:16px;">
       <button class="btn-close" onclick="closeVariations()">← Back to Results</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENSHOT / SHOW RESULTS -->
+<div class="ss-overlay" id="ss-overlay">
+  <div class="ss-card" id="ss-card">
+    <div class="ss-header"><span class="dr">Draw</span><span class="th">The</span><span class="ln">Line</span></div>
+    <div class="ss-scenario" id="ss-scenario"></div>
+    <div class="ss-winner" id="ss-winner"></div>
+    <div class="ss-seats" id="ss-seats"></div>
+    <div class="ss-map" id="ss-map"></div>
+    <div class="ss-districts" id="ss-districts"></div>
+    <div class="ss-stats" id="ss-stats"></div>
+    <div class="ss-eg" id="ss-eg"></div>
+    <div class="ss-footer">DrawTheLine · Gerrymandering Simulator · Class Edition</div>
+    <div class="ss-close-row">
+      <button class="btn-close" onclick="closeScreenshotView()">← Back to Results</button>
     </div>
   </div>
 </div>
@@ -1021,6 +1069,83 @@ function renderTut(){
 function tutNav(dir){if(dir>0&&tutIdx===tutData.length-1){document.getElementById('tut-overlay').classList.remove('show');return;}tutIdx=Math.max(0,Math.min(tutData.length-1,tutIdx+dir));renderTut();}
 
 function fireConfetti(){const cv=document.getElementById('confetti');const W=cv.width=window.innerWidth,H=cv.height=window.innerHeight;const ctx=cv.getContext('2d');const cols=['#D91A2A','#0f4fd4','#F5A623','#00D68F','#FF2D9B','#F5C400','#FF5C00','#9B2BF5'];const ps=[];for(let i=0;i<160;i++)ps.push({x:Math.random()*W,y:-20-Math.random()*200,vx:(Math.random()-0.5)*4,vy:3+Math.random()*4,rot:Math.random()*360,vr:(Math.random()-0.5)*8,w:8+Math.random()*8,h:4+Math.random()*5,c:cols[Math.floor(Math.random()*cols.length)]});let f=0;function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-f/120);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=0.05;});f++;if(f<130)requestAnimationFrame(draw);else ctx.clearRect(0,0,W,H);}draw();}
+
+/* === SCREENSHOT / SHOW RESULTS VIEW === */
+function showScreenshotView(){
+  const s=getStats();const{cnt,R,B}=s;
+  const eg=calcEG(s);
+
+  // Scenario label
+  const scenarioLabels={fair:'⚖️ Fair Map',red:'🔴 Gerrymander Red',blue:'🔵 Gerrymander Blue',free:'🎲 Free Draw'};
+  document.getElementById('ss-scenario').textContent=scenarioLabels[scenario]||'Free Draw';
+
+  // Winner
+  let rSeats=0,bSeats=0;
+  const ddata=[];
+  for(let d=1;d<=5;d++){
+    const w=R[d]>B[d]?'R':'B';
+    if(w==='R')rSeats++;else bSeats++;
+    ddata.push({d,r:R[d],b:B[d],w});
+  }
+  const overall=rSeats>bSeats?'RED':rSeats<bSeats?'BLUE':'TIE';
+  document.getElementById('ss-winner').textContent=overall==='TIE'?"IT'S A TIE!":overall+' WINS!';
+  document.getElementById('ss-winner').className='ss-winner '+(overall==='TIE'?'tie':overall.toLowerCase());
+  document.getElementById('ss-seats').textContent=`Red ${rSeats} · Blue ${bSeats} districts`;
+
+  // Build map
+  const mapEl=document.getElementById('ss-map');mapEl.innerHTML='';
+  for(let i=0;i<CELLS;i++){
+    const cell=document.createElement('div');
+    const d=assignments[i];
+    cell.className='ss-cell '+(voters[i]==='R'?'rv':'bv');
+    cell.textContent=voters[i];
+    if(d){
+      cell.style.borderColor=DC[d];
+      const badge=document.createElement('div');
+      badge.className='ss-dbadge';
+      badge.style.background=DC[d];
+      badge.textContent=d;
+      cell.appendChild(badge);
+    }
+    mapEl.appendChild(cell);
+  }
+
+  // District cards
+  const distEl=document.getElementById('ss-districts');distEl.innerHTML='';
+  ddata.forEach(({d,r,b,w})=>{
+    const div=document.createElement('div');div.className='ss-dist';
+    div.style.borderLeftColor=DC[d];div.style.borderLeftWidth='3px';div.style.borderLeftStyle='solid';
+    div.innerHTML=`<div class="ss-dist-name" style="color:${DC[d]}">D${d}</div><div class="ss-dist-votes">🔴${r} 🔵${b}</div><div class="ss-dist-win ${w==='R'?'red':'blue'}">${w==='R'?'RED':'BLUE'}</div>`;
+    distEl.appendChild(div);
+  });
+
+  // Stats
+  const totalR=20,totalB=30;
+  const statsEl=document.getElementById('ss-stats');
+  statsEl.innerHTML=`
+    <div class="ss-stat"><div class="ss-stat-num" style="color:var(--red-ui)">${rSeats}</div><div class="ss-stat-label">Red seats</div></div>
+    <div class="ss-stat"><div class="ss-stat-num" style="color:#5c94ff">${bSeats}</div><div class="ss-stat-label">Blue seats</div></div>
+    <div class="ss-stat"><div class="ss-stat-num">${totalR}/${totalB}</div><div class="ss-stat-label">R/B voters</div></div>`;
+
+  // EG
+  const egEl=document.getElementById('ss-eg');
+  if(eg){
+    const pct=eg.eg*100;const abs=Math.abs(pct);
+    const col=abs>10?'var(--red-ui)':'var(--green)';
+    egEl.style.background=abs>10?'rgba(232,25,44,0.12)':'rgba(0,214,143,0.1)';
+    egEl.style.color=col;
+    egEl.textContent=`EG: ${pct>0?'+':''}${pct.toFixed(1)}% ${abs<=10?'✅ Under 10%':'🚨 Over 10%'}`;
+  }else{
+    egEl.style.background='rgba(255,255,255,0.04)';egEl.style.color='var(--muted)';
+    egEl.textContent='EG: N/A';
+  }
+
+  document.getElementById('ss-overlay').classList.add('show');
+}
+
+function closeScreenshotView(){
+  document.getElementById('ss-overlay').classList.remove('show');
+}
 
 buildBoard();buildBrushes();buildTally();updateCounts();openTutorial();
 </script>
