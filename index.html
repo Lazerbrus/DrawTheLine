@@ -17,25 +17,109 @@ body.cb{ --rv-bg:#E07B00; --bv-bg:#5B2FC9; }
 
 /* Light theme */
 body.light {
-  --bg:#f0f2f7; --surface:#ffffff; --surface2:#e8eaf2; --border:#c8cce0;
-  --text:#1a1e2e; --muted:#6b739e;
+  --bg:#f4f5fa; --surface:#ffffff; --surface2:#ebedf5; --border:#d0d4e4;
+  --text:#1a1e2e; --muted:#7a82a6;
+  --rv-bg:#cc1825; --bv-bg:#1a52c9;
+  --gold:#c98a00; --green:#00a86f; --red-ui:#cc1520; --blue-ui:#1050e0;
+  --d1:#d94e00; --d2:#7a22c4; --d3:#009e82; --d4:#c49a00; --d5:#d4207a;
 }
-body.light .cell .vlet { color:rgba(255,255,255,0.95); text-shadow:0 1px 3px rgba(0,0,0,0.5); }
-body.light .news-headline { background:#f5f5f5; color:#111; }
-body.light .news-sub { color:#666; }
-body.light .tu-card { background:var(--surface); }
-body.light .eg-simple { background:rgba(0,214,143,0.08); color:#1a6b50; border-color:rgba(0,214,143,0.3); }
-body.light .eg-simple .eg-formula { background:rgba(0,0,0,0.06); color:#b8860b; }
-body.light .eg-simple .eg-threshold { background:rgba(232,25,44,0.08); color:#a01020; }
-body.light .res-card { background:var(--surface); }
-body.light .tut-card { background:var(--surface); }
+/* Voter cell letters on colored backgrounds */
+body.light .cell .vlet { color:rgba(255,255,255,0.95); text-shadow:0 1px 2px rgba(0,0,0,0.35); }
+/* Cell hover in light */
+body.light .cell:hover { filter:brightness(1.05); }
+
+/* Overlays: softer backdrop in light mode */
+body.light .tut-overlay { background:rgba(30,35,60,0.7); }
+body.light .res-overlay { background:rgba(30,35,60,0.75); }
+body.light .var-overlay { background:rgba(30,35,60,0.75); }
+body.light .tu-overlay  { background:rgba(30,35,60,0.8); }
+body.light .ss-overlay  { background:rgba(30,35,60,0.8); }
+
+/* Cards in overlays */
+body.light .res-card { background:var(--surface); box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+body.light .tut-card { background:var(--surface); box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+body.light .tu-card  { background:var(--surface); box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+body.light .var-overlay .var-card { background:var(--surface); box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+body.light .ss-card  { background:var(--surface); border-color:var(--border); box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+
+/* Tutorial body text */
 body.light .tut-body { color:#4a4e6a; }
-body.light .pc-subtitle { color:#1a6b50; }
-body.light .res-feedback.good { color:#0a7a50; }
-body.light .res-feedback.warn { color:#8a6a10; }
-body.light .res-feedback.info { color:#1055F5; }
-body.light .eg-tip { background:var(--surface); }
-body.light .var-overlay .var-card { background:var(--surface); }
+body.light .tut-visual { background:rgba(0,0,0,0.03); border-color:var(--border); }
+
+/* EG explainer box */
+body.light .eg-simple { background:rgba(0,166,111,0.07); color:#1a5c42; border-color:rgba(0,166,111,0.25); }
+body.light .eg-simple .eg-formula { background:rgba(0,0,0,0.05); color:#8a6a00; }
+body.light .eg-simple .eg-threshold { background:rgba(204,21,32,0.06); color:#901018; }
+
+/* EG tip tooltip */
+body.light .eg-tip { background:var(--surface); box-shadow:0 8px 30px rgba(0,0,0,0.15); }
+
+/* News box */
+body.light .news-box { background:var(--surface); border-color:var(--red-ui); }
+body.light .news-ticker-label { background:var(--red-ui); color:#fff; }
+body.light .news-headline { background:var(--surface2); color:var(--text); }
+body.light .news-sub { color:var(--muted); }
+
+/* Perfect crime card */
+body.light .perfect-crime { background:linear-gradient(135deg,rgba(0,168,111,0.08),rgba(201,138,0,0.06)); border-color:var(--green); }
+body.light .pc-subtitle { color:#1a5c42; }
+body.light .pc-badge { background:rgba(0,168,111,0.1); border-color:rgba(0,168,111,0.3); color:#0a7a50; }
+
+/* Achievement */
+body.light .achievement { background:rgba(201,138,0,0.08); border-color:rgba(201,138,0,0.3); }
+body.light .ach-name { color:var(--text); }
+
+/* Result feedback messages */
+body.light .res-feedback.good { background:rgba(0,168,111,0.07); border-color:rgba(0,168,111,0.25); color:#0a6a42; }
+body.light .res-feedback.warn { background:rgba(201,138,0,0.07); border-color:rgba(201,138,0,0.25); color:#7a5a00; }
+body.light .res-feedback.info { background:rgba(16,80,224,0.06); border-color:rgba(16,80,224,0.2); color:#0a40a0; }
+
+/* Result district rows */
+body.light .res-drow { border-color:var(--border); }
+body.light .res-dlist { border-color:var(--border); }
+
+/* Buttons in light mode */
+body.light .btn-close { background:var(--surface2); color:var(--text); border-color:var(--border); }
+body.light .btn-close:hover { border-color:var(--muted); }
+body.light .btn-sm { border-color:var(--border); color:var(--muted); }
+body.light .btn-sm:hover { color:var(--text); border-color:var(--muted); }
+body.light .btn-tut { background:rgba(201,138,0,0.1); color:var(--gold); border-color:rgba(201,138,0,0.3); }
+
+/* Header buttons */
+body.light .sbtn { border-color:var(--border); color:var(--muted); }
+body.light .sbtn:hover { color:var(--text); }
+body.light .sbtn.fair.on { color:#00906a; border-color:#00906a; background:rgba(0,168,111,0.08); }
+body.light .sbtn.red.on { color:var(--red-ui); border-color:var(--red-ui); background:rgba(204,21,32,0.07); }
+body.light .sbtn.blue.on { color:#1050e0; border-color:#1050e0; background:rgba(16,80,224,0.07); }
+body.light .sbtn.free.on { color:var(--gold); border-color:var(--gold); background:rgba(201,138,0,0.07); }
+body.light .util-btn { border-color:var(--border); color:var(--muted); }
+body.light .util-btn:hover { color:var(--text); border-color:var(--muted); }
+body.light .util-btn.on { border-color:var(--gold); color:var(--gold); background:rgba(201,138,0,0.07); }
+
+/* Board grid */
+body.light .board { background:var(--surface); border-color:var(--border); }
+
+/* Streak box */
+body.light .streak-box { background:rgba(201,138,0,0.07); border-color:rgba(201,138,0,0.25); }
+
+/* Split bar in stats */
+body.light .split-r { background:var(--rv-bg); }
+body.light .split-b { background:var(--bv-bg); }
+
+/* Star dimming */
+body.light .star { opacity:0.15; }
+body.light .star.lit { opacity:1; }
+body.light .star-big { opacity:0.15; }
+body.light .star-big.lit { opacity:1; }
+
+/* Perfect zone hint */
+body.light .perfect-zone { background:rgba(0,168,111,0.06); border-color:rgba(0,168,111,0.25); color:#0a6a42; }
+
+/* Variation map cells keep white text on colored bg */
+body.light .var-cell { color:rgba(255,255,255,0.9); }
+
+/* Screenshot overlay cells */
+body.light .ss-cell { color:rgba(255,255,255,0.9); }
 
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
