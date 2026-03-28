@@ -15,11 +15,33 @@
 }
 body.cb{ --rv-bg:#E07B00; --bv-bg:#5B2FC9; }
 
+/* Light theme */
+body.light {
+  --bg:#f0f2f7; --surface:#ffffff; --surface2:#e8eaf2; --border:#c8cce0;
+  --text:#1a1e2e; --muted:#6b739e;
+}
+body.light .cell .vlet { color:rgba(255,255,255,0.95); text-shadow:0 1px 3px rgba(0,0,0,0.5); }
+body.light .news-headline { background:#f5f5f5; color:#111; }
+body.light .news-sub { color:#666; }
+body.light .tu-card { background:var(--surface); }
+body.light .eg-simple { background:rgba(0,214,143,0.08); color:#1a6b50; border-color:rgba(0,214,143,0.3); }
+body.light .eg-simple .eg-formula { background:rgba(0,0,0,0.06); color:#b8860b; }
+body.light .eg-simple .eg-threshold { background:rgba(232,25,44,0.08); color:#a01020; }
+body.light .res-card { background:var(--surface); }
+body.light .tut-card { background:var(--surface); }
+body.light .tut-body { color:#4a4e6a; }
+body.light .pc-subtitle { color:#1a6b50; }
+body.light .res-feedback.good { color:#0a7a50; }
+body.light .res-feedback.warn { color:#8a6a10; }
+body.light .res-feedback.info { color:#1055F5; }
+body.light .eg-tip { background:var(--surface); }
+body.light .var-overlay .var-card { background:var(--surface); }
+
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;display:flex;flex-direction:column;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;display:flex;flex-direction:column;transition:background 0.3s,color 0.3s;}
 
-header{background:var(--surface);border-bottom:2px solid var(--border);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+header{background:var(--surface);border-bottom:2px solid var(--border);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0;transition:background 0.3s,border-color 0.3s;}
 .logo{font-family:'Archivo Black',sans-serif;font-size:20px;letter-spacing:-0.5px;}
 .logo .dr{color:var(--red-ui);}
 .logo .th{color:var(--text);}
@@ -37,24 +59,28 @@ header{background:var(--surface);border-bottom:2px solid var(--border);padding:7
 .util-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(245,166,35,0.1);}
 
 .main{display:flex;flex:1;overflow:hidden;}
-.left-panel,.right-panel{width:196px;min-width:196px;background:var(--surface);display:flex;flex-direction:column;padding:11px;gap:9px;overflow-y:auto;}
+.left-panel,.right-panel{width:196px;min-width:196px;background:var(--surface);display:flex;flex-direction:column;padding:11px;gap:9px;overflow-y:auto;transition:background 0.3s,border-color 0.3s;}
 .left-panel{border-right:1px solid var(--border);}
 .right-panel{border-left:1px solid var(--border);}
 .ptitle{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--border);}
 
 .dbrush{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;border:2px solid transparent;cursor:pointer;background:transparent;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:100%;transition:all 0.11s;}
 .dbrush:hover{background:rgba(255,255,255,0.04);}
+body.light .dbrush:hover{background:rgba(0,0,0,0.04);}
 .dbrush.on{background:rgba(255,255,255,0.07);border-color:currentColor;}
+body.light .dbrush.on{background:rgba(0,0,0,0.06);}
 .dswatch{width:26px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
 .dcnt{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
 .dcnt.full{color:var(--green);}
 .eraser-btn{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;border:2px solid transparent;cursor:pointer;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:100%;transition:all 0.11s;}
 .eraser-btn:hover{color:var(--text);}
 .eraser-btn.on{color:#fff;border-color:#fff;background:rgba(255,255,255,0.06);}
+body.light .eraser-btn.on{color:#333;border-color:#333;background:rgba(0,0,0,0.06);}
 
 .eg-panel{display:flex;flex-direction:column;gap:9px;}
 .eg-panel.hidden{display:none;}
-.eg-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px;}
+.eg-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px;transition:background 0.3s,border-color 0.3s;}
+body.light .eg-box{background:rgba(0,0,0,0.02);}
 .eg-simple{background:rgba(0,214,143,0.06);border:1px solid rgba(0,214,143,0.2);border-radius:8px;padding:10px;font-size:11px;line-height:1.6;color:#a8f0d8;}
 .eg-simple .eg-formula{background:rgba(0,0,0,0.3);border-radius:5px;padding:5px 8px;margin:6px 0;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);text-align:center;}
 .eg-simple .eg-threshold{margin-top:6px;padding:5px 8px;background:rgba(232,25,44,0.1);border-radius:5px;font-size:10px;color:#f5a0a0;}
@@ -63,6 +89,7 @@ header{background:var(--surface);border-bottom:2px solid var(--border);padding:7
 .eg-track{height:10px;background:var(--border);border-radius:5px;overflow:visible;position:relative;margin-bottom:4px;}
 .eg-track-fill{height:100%;border-radius:5px;transition:all 0.4s;position:absolute;top:0;}
 .eg-needle{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;border-radius:2px;transition:left 0.4s;transform:translateX(-50%);z-index:2;}
+body.light .eg-needle{background:#333;}
 .eg-thresh-l{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(255,100,100,0.6);left:calc(50% - 25%);border-radius:1px;}
 .eg-thresh-r{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(255,100,100,0.6);left:calc(50% + 25%);border-radius:1px;}
 .eg-ends{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px;}
@@ -72,7 +99,8 @@ header{background:var(--surface);border-bottom:2px solid var(--border);padding:7
 .perfect-zone{margin-top:7px;padding:7px 9px;border-radius:7px;background:rgba(0,214,143,0.06);border:1px dashed rgba(0,214,143,0.3);font-size:10px;color:var(--green);line-height:1.5;display:none;}
 .perfect-zone.show{display:block;}
 
-.timer-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px;}
+.timer-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px;transition:background 0.3s,border-color 0.3s;}
+body.light .timer-box{background:rgba(0,0,0,0.02);}
 .timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
 .timer-label{font-size:11px;font-weight:700;color:var(--muted);}
 .toggle{width:30px;height:17px;background:var(--border);border-radius:9px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
@@ -92,14 +120,15 @@ header{background:var(--surface);border-bottom:2px solid var(--border);padding:7
 .streak-num{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--gold);}
 
 .center{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;gap:9px;overflow-y:auto;}
-.challenge-banner{width:100%;max-width:440px;border-radius:10px;padding:9px 15px;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,0.03);}
+.challenge-banner{width:100%;max-width:440px;border-radius:10px;padding:9px 15px;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,0.03);transition:background 0.3s,border-color 0.3s;}
+body.light .challenge-banner{background:rgba(0,0,0,0.02);}
 .ch-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
 .ch-text{font-size:13px;font-weight:700;}
 .star-rating{display:flex;justify-content:center;gap:4px;margin-top:4px;}
 .star{font-size:17px;opacity:0.2;transition:opacity 0.3s,transform 0.3s;}
 .star.lit{opacity:1;}
 
-.board{display:grid;grid-template-columns:repeat(5,54px);grid-template-rows:repeat(10,50px);gap:4px;padding:9px;background:var(--surface);border:2px solid var(--border);border-radius:12px;user-select:none;}
+.board{display:grid;grid-template-columns:repeat(5,54px);grid-template-rows:repeat(10,50px);gap:4px;padding:9px;background:var(--surface);border:2px solid var(--border);border-radius:12px;user-select:none;transition:background 0.3s,border-color 0.3s;}
 .cell{border-radius:7px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid transparent;transition:transform 0.07s,filter 0.08s;overflow:hidden;}
 .cell:hover{transform:scale(1.08);filter:brightness(1.1);z-index:10;}
 .cell.rv{background:var(--rv-bg);}
@@ -134,7 +163,8 @@ body.cb .cell .cb-shape{opacity:0.8;}
 .btn-tut{background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.35);padding:7px 13px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.14s;}
 .btn-tut:hover{background:rgba(245,166,35,0.22);}
 
-.tally-row{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:7px;background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+.tally-row{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:7px;background:rgba(255,255,255,0.03);border:1px solid var(--border);transition:background 0.3s,border-color 0.3s;}
+body.light .tally-row{background:rgba(0,0,0,0.02);}
 .td{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
 .tn{font-size:12px;font-weight:700;flex:1;}
 .tm{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
@@ -142,7 +172,8 @@ body.cb .cell .cb-shape{opacity:0.8;}
 .tw.red{background:rgba(232,25,44,0.2);color:var(--red-ui);}
 .tw.blue{background:rgba(16,85,245,0.18);color:#5c94ff;}
 .tw.none{color:var(--muted);}
-.stats-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;}
+.stats-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;transition:background 0.3s,border-color 0.3s;}
+body.light .stats-box{background:rgba(0,0,0,0.02);}
 .srow{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;}
 .slabel{color:var(--muted);}
 .sval.red{color:var(--red-ui);font-weight:700;}
@@ -155,10 +186,11 @@ body.cb .cell .cb-shape{opacity:0.8;}
 
 .tut-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:center;justify-content:center;}
 .tut-overlay.show{display:flex;}
-.tut-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:480px;width:92%;}
+.tut-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:480px;width:92%;transition:background 0.3s,border-color 0.3s;}
 .tut-counter{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .tut-h{font-family:'Archivo Black',sans-serif;font-size:26px;margin-bottom:10px;letter-spacing:-0.5px;}
 .tut-visual{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;min-height:80px;}
+body.light .tut-visual{background:rgba(0,0,0,0.03);}
 .tut-body{font-size:13px;line-height:1.7;color:#b8bede;margin-bottom:16px;}
 .tut-body strong{color:var(--text);}
 .tut-nav{display:flex;justify-content:space-between;align-items:center;}
@@ -178,7 +210,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
 
 .res-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:flex-start;justify-content:center;overflow-y:auto;padding:14px;}
 .res-overlay.show{display:flex;}
-.res-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:520px;width:100%;text-align:center;margin:auto;}
+.res-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:520px;width:100%;text-align:center;margin:auto;transition:background 0.3s,border-color 0.3s;}
 .res-title{font-family:'Archivo Black',sans-serif;font-size:48px;letter-spacing:-1px;margin-bottom:2px;line-height:1;}
 .res-title.red{color:var(--red-ui);}.res-title.blue{color:#5c94ff;}.res-title.tie{color:var(--gold);}
 .res-sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
@@ -197,6 +229,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
 .ach-icon{font-size:26px;}
 .ach-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;}
 .ach-name{font-family:'Archivo Black',sans-serif;font-size:15px;color:#fff;}
+body.light .ach-name{color:#1a1e2e;}
 .news-box{background:#0a0a0a;border:2px solid var(--red-ui);border-radius:10px;overflow:hidden;margin-bottom:12px;display:none;}
 .news-box.show{display:block;}
 .news-ticker-label{background:var(--red-ui);color:#fff;font-family:'Archivo Black',sans-serif;font-size:10px;letter-spacing:1px;padding:3px 10px;display:inline-block;}
@@ -218,6 +251,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
 
 /* EG result box with optional toggle */
 .eg-res{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;text-align:left;}
+body.light .eg-res{background:rgba(0,0,0,0.02);}
 .eg-res-header{display:flex;align-items:center;justify-content:space-between;}
 .eg-res-title{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 .eg-res-toggle{font-size:9px;background:var(--border);border:none;border-radius:4px;color:var(--muted);padding:2px 7px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;}
@@ -225,6 +259,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
 .eg-res-content{margin-top:9px;}
 .eg-res-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .eg-res-stat{background:rgba(255,255,255,0.03);border-radius:7px;padding:7px 10px;}
+body.light .eg-res-stat{background:rgba(0,0,0,0.03);}
 .eg-res-num{font-family:'Archivo Black',sans-serif;font-size:22px;line-height:1;}
 .eg-res-desc{font-size:10px;color:var(--muted);margin-top:1px;}
 
@@ -236,13 +271,37 @@ body.cb .cell .cb-shape{opacity:0.8;}
 .close-row{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
 .btn-close{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.14s;font-family:'Syne',sans-serif;}
 .btn-close:hover{border-color:var(--text);}
+.btn-var{background:linear-gradient(135deg,var(--gold),#e09000);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.14s;font-family:'Syne',sans-serif;}
+.btn-var:hover{transform:scale(1.03);filter:brightness(1.1);}
 
 .tu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:700;align-items:center;justify-content:center;}
 .tu-overlay.show{display:flex;}
-.tu-card{background:var(--surface);border:3px solid var(--red-ui);border-radius:16px;padding:32px;text-align:center;max-width:340px;animation:shake 0.4s ease;}
+.tu-card{background:var(--surface);border:3px solid var(--red-ui);border-radius:16px;padding:32px;text-align:center;max-width:340px;animation:shake 0.4s ease;transition:background 0.3s;}
 .tu-h{font-family:'Archivo Black',sans-serif;font-size:52px;color:var(--red-ui);letter-spacing:-2px;line-height:1;}
 .tu-sub{color:var(--muted);font-size:12px;margin:7px 0 20px;}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* Variations overlay */
+.var-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:650;align-items:flex-start;justify-content:center;overflow-y:auto;padding:14px;}
+.var-overlay.show{display:flex;}
+.var-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:600px;width:100%;margin:auto;transition:background 0.3s,border-color 0.3s;}
+.var-title{font-family:'Archivo Black',sans-serif;font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;text-align:center;}
+.var-subtitle{font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px;}
+.var-section{margin-bottom:20px;}
+.var-section-title{font-family:'Archivo Black',sans-serif;font-size:15px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.var-section-title.fair-t{color:var(--green);}
+.var-section-title.red-t{color:var(--red-ui);}
+.var-section-title.blue-t{color:#5c94ff;}
+.var-grid-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.var-map{flex:1;min-width:220px;}
+.var-map-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+.var-map-grid{display:grid;grid-template-columns:repeat(5,28px);grid-template-rows:repeat(10,24px);gap:2px;}
+.var-cell{border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black',sans-serif;font-size:9px;color:rgba(255,255,255,0.9);border:2px solid transparent;}
+.var-cell.rv{background:var(--rv-bg);}
+.var-cell.bv{background:var(--bv-bg);}
+.var-result{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+.var-result b{color:var(--text);}
+.var-eg{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:2px;}
 
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:900;}
 .eg-tip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:12px;line-height:1.65;max-width:220px;z-index:800;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
@@ -266,6 +325,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
     <div style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
     <button class="util-btn" id="cb-btn" onclick="toggleCB()">👁 Colorblind</button>
     <button class="util-btn" id="eg-btn" onclick="toggleEGPanel()">📊 EG Off</button>
+    <button class="util-btn" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
   </div>
 </header>
 
@@ -374,7 +434,7 @@ body.cb .cell .cb-shape{opacity:0.8;}
 <!-- TUTORIAL -->
 <div class="tut-overlay" id="tut-overlay">
   <div class="tut-card">
-    <div class="tut-counter" id="tut-ctr">Step 1 of 6</div>
+    <div class="tut-counter" id="tut-ctr">Step 1 of 3</div>
     <div class="tut-h" id="tut-h"></div>
     <div id="tut-content"></div>
     <div class="tut-nav">
@@ -425,6 +485,19 @@ body.cb .cell .cb-shape{opacity:0.8;}
     <div class="close-row">
       <button class="btn-close" onclick="closeResult()">← Keep Drawing</button>
       <button class="btn-close" onclick="resetGrid();closeResult()">↺ Try Again</button>
+      <button class="btn-var" onclick="showVariations()">🗺️ Show Variations</button>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATIONS OVERLAY -->
+<div class="var-overlay" id="var-overlay">
+  <div class="var-card">
+    <div class="var-title">🗺️ Optimal Gerrymanders</div>
+    <div class="var-subtitle">These maps show how to perfectly gerrymander for each scenario — rigging the result while keeping the Efficiency Gap under 10%.</div>
+    <div id="var-content"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn-close" onclick="closeVariations()">← Back to Results</button>
     </div>
   </div>
 </div>
@@ -437,29 +510,164 @@ for(let r=0;r<10;r++) for(let c=0;c<5;c++) voters.push(c<2?'R':'B');
 
 let assignments=new Array(CELLS).fill(0),selTool=1,painting=false,scenario='fair';
 let timerOn=false,timerDur=120,timerRem=120,timerTick=null;
-let tutIdx=0,streak=0,cbOn=false,egVisible=true;
+let tutIdx=0,streak=0,cbOn=false,egVisible=true,lightTheme=false;
 
+/* === TUTORIAL DATA (3 pages) === */
 const tutData=[
   {h:'What is Gerrymandering?',
    body:`<strong>Gerrymandering</strong> means drawing the boundaries of voting districts in a sneaky way — to give one political party more seats than their vote share deserves.<br><br>It's been going on since 1812, when Massachusetts Governor <strong>Elbridge Gerry</strong> signed a district so weirdly shaped it looked like a salamander. The name stuck!`,
    vis:`<div style="text-align:center"><div style="font-size:52px;animation:wobble 2s ease-in-out infinite">🦎</div><div style="font-size:11px;color:var(--muted);margin-top:8px">The original "Gerry-mander" district, 1812</div></div><style>@keyframes wobble{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}</style>`},
-  {h:'The 60/40 Problem',
-   body:`In this game, <strong style="color:#5c94ff">Blue has 60%</strong> of voters and <strong style="color:var(--red-ui)">Red has 40%</strong>.<br><br>If the map is drawn <em>fairly</em>, Blue wins 3 districts and Red wins 2 — that reflects the actual vote. But by drawing lines cleverly, the minority party can win the majority of seats.`,
-   vis:`<div style="display:flex;gap:20px;align-items:center;justify-content:center"><div><div class="mg">${[...Array(20)].map((_,i)=>`<div class="mc ${i<8?'r':'b'}"><div class="mc-l">${i<8?'R':'B'}</div></div>`).join('')}</div><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:5px">50 voters</div></div><div style="font-size:24px">→</div><div style="text-align:center"><div style="font-family:'Archivo Black',sans-serif;font-size:22px;color:#5c94ff">3 Blue</div><div style="color:var(--muted);font-size:12px">+</div><div style="font-family:'Archivo Black',sans-serif;font-size:22px;color:var(--red-ui)">2 Red</div><div style="font-size:10px;color:var(--muted);margin-top:3px">= fair result</div></div></div>`},
-  {h:'Packing & Cracking',
-   body:`Two classic tricks:<br><br>🟥 <strong>Packing</strong> — cram your opponent's voters into 1 or 2 districts. They win those seats <em>massively</em> — but only once each.<br><br>💛 <strong>Cracking</strong> — split your opponent's voters between lots of districts so they're always the <em>minority</em> in each one and never win.`,
-   vis:`<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center"><div><div style="font-size:10px;font-weight:700;color:var(--red-ui);margin-bottom:4px;text-align:center">🟥 PACKING — cram them in</div><div class="mg">${['b','b','b','b','b','b','b','b','b','b','r','r','b','r','r','r','r','r','r','r'].map((v,i)=>`<div class="mc ${v} ${i<10?'d1':'d2'}"><div class="mc-l">${v.toUpperCase()}</div></div>`).join('')}</div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Blue wins D1 by loads — only counts once</div></div><div><div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;text-align:center">💛 CRACKING — spread them thin</div><div class="mg">${[...Array(20)].map((_,i)=>{const v=i%5<2?'r':'b';return`<div class="mc ${v} d${Math.floor(i/5)+1}"><div class="mc-l">${v.toUpperCase()}</div></div>`}).join('')}</div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Blue voters always outnumbered in every row</div></div></div>`},
-  {h:'The Efficiency Gap — Simply',
-   body:`Imagine a race. If you win by <em>more than you needed to</em>, those extra votes were <strong>wasted</strong>. All your losing votes were also wasted.<br><br>The Efficiency Gap counts up wasted votes for each side and compares them.<br><br><strong style="color:var(--gold)">EG = (Wasted Red − Wasted Blue) ÷ 50</strong><br><br>Courts say anything above <strong>±10%</strong> is suspicious.`,
-   vis:`<div style="width:100%;text-align:center"><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Example: District ends 8 Blue – 2 Red</div><div style="display:flex;gap:14px;justify-content:center"><div style="background:rgba(217,26,42,0.12);border:1px solid rgba(217,26,42,0.4);border-radius:8px;padding:9px 14px;text-align:center;flex:1"><div style="font-family:'Archivo Black',sans-serif;font-size:28px;color:var(--red-ui)">2</div><div style="font-size:10px;color:var(--muted)">Red wasted<br>(lost every vote)</div></div><div style="background:rgba(16,85,245,0.12);border:1px solid rgba(16,85,245,0.3);border-radius:8px;padding:9px 14px;text-align:center;flex:1"><div style="font-family:'Archivo Black',sans-serif;font-size:28px;color:#5c94ff">3</div><div style="font-size:10px;color:var(--muted)">Blue wasted<br>(won by 3 extra)</div></div></div><div style="margin-top:10px;font-size:11px;color:var(--muted)">Winning by too much = wasting votes</div></div>`},
-  {h:'The Perfect Gerrymander 🕵️',
-   body:`The secret challenge: can you <strong>rig the result</strong> while <strong>keeping the Efficiency Gap under 10%</strong>?<br><br>If you do, you've pulled off the <em>Perfect Gerrymander</em> — a map so cleverly disguised that a court might not even catch it. This is exactly what real political mapmakers try to do.<br><br>Watch the EG meter as you draw. Stay below ±10% and change the election. 🏅`,
-   vis:`<div style="text-align:center"><div style="font-size:40px;margin-bottom:8px">🕵️🗺️⚖️</div><div style="background:linear-gradient(135deg,rgba(0,214,143,0.1),rgba(245,166,35,0.08));border:1.5px solid var(--green);border-radius:10px;padding:10px 14px;font-size:12px;color:#a8f0d8;line-height:1.6"><b style="color:var(--green)">Goal:</b> Win more seats than your vote share deserves...<br>...but keep EG score between −10% and +10%.<br><b style="color:var(--gold)">That's the perfect crime.</b></div></div>`},
+
+  {h:'The Rules of the Game',
+   body:`In this game, <strong style="color:#5c94ff">Blue has 60%</strong> of voters and <strong style="color:var(--red-ui)">Red has 40%</strong>. A fair map gives Blue 3 seats and Red 2.<br><br>Your job: draw <strong>5 districts</strong> of 10 cells each. By drawing the lines cleverly, the minority party can steal the majority — that's gerrymandering.<br><br>Two classic tricks:<br>🟥 <strong>Packing</strong> — cram opponents into a few districts so they win big but waste votes.<br>💛 <strong>Cracking</strong> — split opponents across many districts so they always lose.`,
+   vis:`<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:center"><div><div class="mg">${[...Array(20)].map((_,i)=>`<div class="mc ${i<8?'r':'b'}"><div class="mc-l">${i<8?'R':'B'}</div></div>`).join('')}</div><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:5px">50 voters → 5 districts</div></div><div style="font-size:24px">→</div><div style="text-align:center"><div style="font-family:'Archivo Black',sans-serif;font-size:18px;color:#5c94ff">3 Blue</div><div style="color:var(--muted);font-size:11px">+</div><div style="font-family:'Archivo Black',sans-serif;font-size:18px;color:var(--red-ui)">2 Red</div><div style="font-size:10px;color:var(--muted);margin-top:3px">= fair result</div></div></div>`},
+
   {h:'How to Play',
-   body:`<strong>1.</strong> Pick a <strong>District brush</strong> (1–5) on the left<br><strong>2.</strong> Click and drag cells on the board to assign them<br><strong>3.</strong> Each district needs exactly <strong>10 cells</strong> — fill all 50<br><strong>4.</strong> Hit <strong>Check Results</strong> for the big reveal<br><br>Try all three scenarios. Can you figure out how to gerrymander while keeping the EG under 10%? Can you explain <em>why</em> the shapes you drew helped your side win?`,
+   body:`<strong>1.</strong> Pick a <strong>District brush</strong> (1–5) on the left<br><strong>2.</strong> Click and drag cells on the board to assign them<br><strong>3.</strong> Each district needs exactly <strong>10 cells</strong> — fill all 50<br><strong>4.</strong> Hit <strong>Check Results</strong> for the big reveal<br><br>The <strong>Efficiency Gap</strong> (EG) measures how fair your map is — courts say anything over ±10% is suspicious. Can you rig the result <em>and</em> keep EG under 10%? That's the <strong>Perfect Gerrymander</strong>. 🕵️`,
    vis:`<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center">${[1,2,3,4,5].map(d=>`<div style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:7px 10px"><div style="width:22px;height:16px;border-radius:3px;background:${DC[d]};display:flex;align-items:center;justify-content:center;font-family:'Archivo Black',sans-serif;font-size:9px;color:#fff">${d}</div><span style="font-size:11px;font-weight:700;color:${DC[d]}">D${d}</span></div>`).join('')}</div>`}
 ];
 
+/* === VARIATION MAPS (optimal gerrymanders) === */
+// Grid is 5 cols x 10 rows. Columns 0-1 are Red, columns 2-4 are Blue.
+// Cell index = row*5 + col
+
+// Fair: 3B + 2R — each district gets 4R+6B or similar proportional split
+const VAR_FAIR = [
+  // D1: rows 0-1 (10 cells) → 4R 6B
+  1,1,1,1,1, 1,1,1,1,1,
+  // D2: rows 2-3 → 4R 6B
+  2,2,2,2,2, 2,2,2,2,2,
+  // D3: rows 4-5 → 4R 6B
+  3,3,3,3,3, 3,3,3,3,3,
+  // D4: rows 6-7 → 4R 6B
+  4,4,4,4,4, 4,4,4,4,4,
+  // D5: rows 8-9 → 4R 6B
+  5,5,5,5,5, 5,5,5,5,5
+];
+
+// Gerrymander Red: Red wins 3 seats with 40% of votes
+// Pack Blue into D1 and D2 (heavy blue wins), crack rest so Red wins D3,D4,D5
+const VAR_RED = [
+  // Row 0: pack blue into D1
+  3,3,1,1,1,
+  // Row 1
+  3,3,1,1,1,
+  // Row 2
+  4,4,1,1,2,
+  // Row 3
+  4,4,2,2,2,
+  // Row 4
+  5,5,2,2,2,
+  // Row 5
+  5,5,3,3,3,
+  // Row 6
+  4,4,3,3,2,
+  // Row 7
+  4,5,5,5,2,
+  // Row 8
+  3,5,4,4,1,
+  // Row 9
+  3,5,1,1,1
+];
+
+// Gerrymander Blue: Blue wins all 5 seats
+// Spread Red voters (2 cols) across all 5 districts so each gets 4R 6B → Blue wins all
+const VAR_BLUE = [
+  1,2,1,2,3, 1,2,1,2,3,
+  1,2,3,3,3, 1,2,3,3,4,
+  4,5,4,4,4, 4,5,4,5,5,
+  5,5,5,2,1, 3,5,2,1,4
+];
+
+function buildVariationMaps(){
+  const container = document.getElementById('var-content');
+  container.innerHTML = '';
+
+  const scenarios = [
+    {
+      key: 'fair', title: '⚖️ Fair Map', cls: 'fair-t',
+      map: VAR_FAIR,
+      desc: 'Each district takes 2 full rows: 4 Red + 6 Blue. Blue wins 3, Red wins 2 — exactly proportional.'
+    },
+    {
+      key: 'red', title: '🔴 Gerrymander for Red', cls: 'red-t',
+      map: VAR_RED,
+      desc: 'Pack Blue voters into 2 districts (big Blue wins). Crack remaining Blue across 3 districts so Red edges each one.'
+    },
+    {
+      key: 'blue', title: '🔵 Gerrymander for Blue', cls: 'blue-t',
+      map: VAR_BLUE,
+      desc: 'Spread Red voters evenly: every district gets 4R + 6B. Blue wins all 5 seats despite Red having 40%.'
+    }
+  ];
+
+  scenarios.forEach(sc => {
+    const section = document.createElement('div');
+    section.className = 'var-section';
+
+    // Compute results for this map
+    const distR = [0,0,0,0,0,0], distB = [0,0,0,0,0,0];
+    for(let i=0;i<CELLS;i++){
+      const d = sc.map[i];
+      if(voters[i]==='R') distR[d]++; else distB[d]++;
+    }
+    let rSeats=0, bSeats=0, twr=0, twb=0;
+    let distDetails = [];
+    for(let d=1;d<=5;d++){
+      const w = distR[d]>distB[d]?'Red':'Blue';
+      if(w==='Red') rSeats++; else bSeats++;
+      const thr = Math.ceil((distR[d]+distB[d])/2);
+      if(distR[d]>distB[d]){twr+=distR[d]-thr;twb+=distB[d];}
+      else{twr+=distR[d];twb+=distB[d]-thr;}
+      distDetails.push(`D${d}: ${distR[d]}R/${distB[d]}B → ${w}`);
+    }
+    const eg = ((twr-twb)/CELLS*100);
+    const egStr = (eg>0?'+':'') + eg.toFixed(1) + '%';
+
+    section.innerHTML = `
+      <div class="var-section-title ${sc.cls}">${sc.title}</div>
+      <div class="var-grid-row">
+        <div class="var-map">
+          <div class="var-map-label">${sc.desc}</div>
+          <div class="var-map-grid" id="var-grid-${sc.key}"></div>
+          <div class="var-result">
+            <b>Result: Red ${rSeats} – Blue ${bSeats}</b><br>
+            ${distDetails.join(' · ')}
+            <div class="var-eg" style="color:${Math.abs(eg)>10?'var(--red-ui)':'var(--green)'}">EG: ${egStr} ${Math.abs(eg)<=10?'✅ Under 10%':'🚨 Over 10%'}</div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(section);
+
+    // Build mini grid
+    const grid = document.getElementById('var-grid-'+sc.key);
+    for(let i=0;i<CELLS;i++){
+      const cell = document.createElement('div');
+      const d = sc.map[i];
+      cell.className = 'var-cell '+(voters[i]==='R'?'rv':'bv');
+      cell.textContent = voters[i];
+      cell.style.borderColor = DC[d];
+      grid.appendChild(cell);
+    }
+  });
+}
+
+function showVariations(){
+  buildVariationMaps();
+  document.getElementById('var-overlay').classList.add('show');
+}
+function closeVariations(){
+  document.getElementById('var-overlay').classList.remove('show');
+}
+
+/* === THEME TOGGLE === */
+function toggleTheme(){
+  lightTheme = !lightTheme;
+  document.body.classList.toggle('light', lightTheme);
+  document.getElementById('theme-btn').textContent = lightTheme ? '🌙 Dark' : '☀️ Light';
+}
+
+/* === BOARD === */
 function buildBoard(){
   const board=document.getElementById('board');board.innerHTML='';
   for(let i=0;i<CELLS;i++){
@@ -718,7 +926,7 @@ function checkResults(){
     list.appendChild(row);
   });
 
-  // EG result box — shows toggle button when EG panel was hidden during play
+  // EG result box
   const egBox=document.getElementById('eg-res');
   const egContent=eg
     ?`<div class="eg-res-grid">
