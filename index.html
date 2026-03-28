@@ -471,19 +471,24 @@ body.light .mob-brush.on{border-color:#333;box-shadow:0 0 8px rgba(0,0,0,0.15);}
 
 /* Mobile center area */
 body.mobile .center{padding:4px 8px;gap:4px;align-items:center;}
-/* Desktop: arrow hidden, ch-header is just a plain wrapper */
+/* Desktop: mission banner normal */
 .ch-arrow{display:none;}
-.ch-header{pointer-events:none;}
+.ch-header{display:none;}
+.mob-mission-btn{display:none;}
+.mob-mission-popup{display:none;}
 
-/* Mobile: collapsible mission */
-body.mobile .challenge-banner{padding:0;max-width:100%;overflow:hidden;}
-body.mobile .ch-header{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-body.mobile .ch-label{font-size:8px;margin-bottom:0;font-weight:800;}
-body.mobile .ch-arrow{display:inline-block;font-size:10px;color:var(--muted);transition:transform 0.25s;}
-body.mobile .ch-arrow.collapsed{transform:rotate(-90deg);}
-body.mobile .ch-body{padding:0 10px 6px;max-height:200px;opacity:1;overflow:hidden;transition:max-height 0.3s ease,opacity 0.25s,padding 0.3s;}
-body.mobile .ch-body.collapsed{max-height:0;padding-top:0;padding-bottom:0;opacity:0;}
-body.mobile .ch-text{font-size:10px;}
+/* Mobile: hide full banner, show mission button */
+body.mobile .challenge-banner{display:none !important;}
+body.mobile .mob-mission-btn{display:flex;position:fixed;left:8px;top:50%;transform:translateY(-50%);z-index:90;width:34px;height:34px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.3);-webkit-tap-highlight-color:transparent;transition:all 0.15s;}
+body.light .mob-mission-btn{box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+body.mobile .mob-mission-btn:active{transform:translateY(-50%) scale(0.92);}
+body.mobile .mob-mission-popup{position:fixed;left:8px;top:50%;transform:translateY(calc(-50% + 24px));z-index:91;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;max-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;}
+body.light .mob-mission-popup{box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+body.mobile .mob-mission-popup.open{display:block;opacity:1;pointer-events:auto;}
+.mob-mission-popup .mp-label{font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.mob-mission-popup .mp-text{font-size:11px;font-weight:700;color:var(--text);line-height:1.4;}
+.mob-mission-popup .mp-stars{display:flex;gap:3px;margin-top:4px;}
+.mob-mission-popup .mp-stars .star{font-size:12px;}
 body.mobile .star-rating{gap:2px;margin-top:1px;}
 body.mobile .star-rating .star{font-size:12px;}
 
@@ -584,6 +589,14 @@ body.mobile .mob-tally{display:block;}
     </div>
   </div>
 </header>
+
+<!-- MOBILE MISSION BUTTON + POPUP -->
+<button class="mob-mission-btn" id="mob-mission-btn" onclick="toggleMobMission()">🎯</button>
+<div class="mob-mission-popup" id="mob-mission-popup">
+  <div class="mp-label">Your Mission</div>
+  <div class="mp-text" id="mp-text">Draw 5 fair districts reflecting the 60/40 popular vote split. Aim for 3 Blue + 2 Red.</div>
+  <div class="mp-stars"><span class="star" id="mp-st1">⭐</span><span class="star" id="mp-st2">⭐</span><span class="star" id="mp-st3">⭐</span></div>
+</div>
 
 <!-- MOBILE TOOLBAR -->
 <div class="mob-toolbar" id="mob-toolbar"></div>
@@ -1177,12 +1190,13 @@ function toggleEGExplainer(){
   btn.textContent=open?'▲ Hide':'▼ Show';
 }
 
-function resetStars(){['st1','st2','st3'].forEach(id=>document.getElementById(id).classList.remove('lit'));}
+function resetStars(){['st1','st2','st3','mp-st1','mp-st2','mp-st3'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('lit');});}
 function updateStarHint(rS,bS){
   resetStars();
-  if(scenario==='fair'){if(bS>=1&&rS>=1)document.getElementById('st1').classList.add('lit');if(bS>=2&&rS>=1)document.getElementById('st2').classList.add('lit');if(bS===3&&rS===2)document.getElementById('st3').classList.add('lit');}
-  else if(scenario==='red'){if(rS>=1)document.getElementById('st1').classList.add('lit');if(rS>=2)document.getElementById('st2').classList.add('lit');if(rS>=3)document.getElementById('st3').classList.add('lit');}
-  else if(scenario==='blue'){if(bS>=3)document.getElementById('st1').classList.add('lit');if(bS>=4)document.getElementById('st2').classList.add('lit');if(bS>=5)document.getElementById('st3').classList.add('lit');}
+  const light=(id)=>{const e=document.getElementById(id);if(e)e.classList.add('lit');const m=document.getElementById('mp-'+id);if(m)m.classList.add('lit');};
+  if(scenario==='fair'){if(bS>=1&&rS>=1)light('st1');if(bS>=2&&rS>=1)light('st2');if(bS===3&&rS===2)light('st3');}
+  else if(scenario==='red'){if(rS>=1)light('st1');if(rS>=2)light('st2');if(rS>=3)light('st3');}
+  else if(scenario==='blue'){if(bS>=3)light('st1');if(bS>=4)light('st2');if(bS>=5)light('st3');}
 }
 
 function resetGrid(){
@@ -1551,13 +1565,21 @@ function updateMobEGSlider(s){
   else hint.textContent = '🚨 Gerrymander! Over 10%';
 }
 
-function toggleMission(){
-  if(!mobileMode) return;
-  const body = document.getElementById('ch-body');
-  const arrow = document.getElementById('ch-arrow');
-  body.classList.toggle('collapsed');
-  arrow.classList.toggle('collapsed');
+function toggleMobMission(){
+  const popup = document.getElementById('mob-mission-popup');
+  popup.classList.toggle('open');
+  // Sync text from main ch-text
+  document.getElementById('mp-text').textContent = document.getElementById('ch-text').textContent;
 }
+
+// Close mission popup when tapping elsewhere
+document.addEventListener('click', function(e){
+  const popup = document.getElementById('mob-mission-popup');
+  const btn = document.getElementById('mob-mission-btn');
+  if(popup && popup.classList.contains('open') && !popup.contains(e.target) && e.target !== btn){
+    popup.classList.remove('open');
+  }
+});
 
 function toggleMobTally(){
   const toggle = document.getElementById('mob-tally-toggle');
