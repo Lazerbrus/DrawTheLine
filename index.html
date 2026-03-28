@@ -436,12 +436,23 @@ body.light .landing-btn:hover{box-shadow:0 8px 30px rgba(0,0,0,0.1);}
 .landing-btn-sub{font-size:10px;color:var(--muted);}
 
 /* ===== MOBILE MODE ===== */
-body.mobile header{padding:5px 10px;}
-body.mobile .logo{font-size:15px;}
-body.mobile .logo-tag{font-size:7px;letter-spacing:1.5px;}
-body.mobile .header-right{gap:4px;}
-body.mobile .header-right .sbtn{font-size:9px;padding:3px 7px;}
-body.mobile .header-right .util-btn{font-size:8px;padding:3px 6px;}
+body.mobile header{padding:6px 10px;flex-direction:column;align-items:center;gap:4px;}
+body.mobile .logo{font-size:16px;text-align:center;}
+body.mobile .logo-tag{font-size:7px;letter-spacing:1.5px;text-align:center;}
+body.mobile .header-right{justify-content:center;gap:4px;width:100%;}
+body.mobile .header-right .sbtn{font-size:9px;padding:3px 8px;border-radius:14px;}
+body.mobile .header-right .util-btn{display:none;}
+body.mobile .header-right .hdr-divider{display:none;}
+
+/* Mobile settings gear + dropdown */
+.mob-settings-wrap{display:none;position:relative;}
+body.mobile .mob-settings-wrap{display:block;}
+.mob-gear{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.14s;flex-shrink:0;}
+.mob-gear:hover,.mob-gear.open{color:var(--text);border-color:var(--text);}
+.mob-settings-dd{display:none;position:absolute;top:36px;right:0;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px;min-width:150px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.4);flex-direction:column;gap:4px;}
+body.light .mob-settings-dd{box-shadow:0 8px 24px rgba(0,0,0,0.1);}
+.mob-settings-dd.open{display:flex;}
+.mob-settings-dd .util-btn{display:flex !important;width:100%;justify-content:flex-start;font-size:10px;padding:6px 10px;border-radius:6px;}
 
 body.mobile .main{flex-direction:column;overflow-y:auto;overflow-x:hidden;}
 body.mobile .left-panel,body.mobile .right-panel{display:none !important;}
@@ -459,22 +470,24 @@ body.light .mob-brush.on{border-color:#333;box-shadow:0 0 8px rgba(0,0,0,0.15);}
 .mob-count.full{color:var(--green);}
 
 /* Mobile center area */
-body.mobile .center{padding:8px;gap:6px;}
-body.mobile .challenge-banner{padding:6px 10px;max-width:100%;}
-body.mobile .ch-label{font-size:8px;}
-body.mobile .ch-text{font-size:11px;}
-body.mobile .star-rating .star{font-size:14px;}
+body.mobile .center{padding:4px 8px;gap:4px;align-items:center;}
+body.mobile .challenge-banner{padding:4px 10px;max-width:100%;}
+body.mobile .ch-label{font-size:7px;margin-bottom:0;}
+body.mobile .ch-text{font-size:10px;}
+body.mobile .star-rating{gap:2px;margin-top:1px;}
+body.mobile .star-rating .star{font-size:12px;}
 
-body.mobile .board{grid-template-columns:repeat(5,46px);grid-template-rows:repeat(10,42px);gap:3px;padding:6px;border-radius:10px;}
-body.mobile .cell{border-radius:5px;border-width:2px;}
-body.mobile .cell .vlet{font-size:14px;}
-body.mobile .cell .d-badge{width:12px;height:12px;font-size:8px;top:2px;left:2px;}
+body.mobile .board{grid-template-columns:repeat(5,calc((100vw - 60px)/5));grid-template-rows:repeat(10,calc((100vw - 60px)/5 * 0.82));gap:2px;padding:5px;border-radius:10px;max-width:calc(100vw - 16px);}
+body.mobile .cell{border-radius:4px;border-width:2px;}
+body.mobile .cell .vlet{font-size:clamp(10px,3vw,14px);}
+body.mobile .cell .d-badge{width:11px;height:11px;font-size:7px;top:1px;left:1px;border-radius:2px;}
 
-body.mobile .prog-wrap{max-width:260px;}
+body.mobile .prog-wrap{max-width:240px;}
+body.mobile .prog-top{font-size:9px;margin-bottom:2px;}
 body.mobile .btn-row{gap:4px;}
-body.mobile .btn-check{padding:8px 20px;font-size:13px;}
-body.mobile .btn-sm{padding:5px 10px;font-size:11px;}
-body.mobile .btn-tut{padding:5px 10px;font-size:11px;}
+body.mobile .btn-check{padding:6px 16px;font-size:12px;}
+body.mobile .btn-sm{padding:4px 9px;font-size:10px;}
+body.mobile .btn-tut{padding:4px 9px;font-size:10px;}
 
 /* Mobile tally (collapsible below board) */
 .mob-tally{display:none;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px;flex-shrink:0;}
@@ -526,10 +539,18 @@ body.mobile .mob-tally{display:block;}
     <button class="sbtn red"  id="s-red"  onclick="setScenario('red')">🔴 Gerrymander Red</button>
     <button class="sbtn blue" id="s-blue" onclick="setScenario('blue')">🔵 Gerrymander Blue</button>
     <button class="sbtn free" id="s-free" onclick="setScenario('free')">🎲 Free</button>
-    <div style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
+    <div class="hdr-divider" style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
     <button class="util-btn" id="cb-btn" onclick="toggleCB()">👁 Colorblind</button>
     <button class="util-btn" id="eg-btn" onclick="toggleEGPanel()">📊 EG Off</button>
     <button class="util-btn" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+    <div class="mob-settings-wrap">
+      <button class="mob-gear" id="mob-gear" onclick="toggleMobSettings()">⚙️</button>
+      <div class="mob-settings-dd" id="mob-settings-dd">
+        <button class="util-btn" onclick="toggleCB();toggleMobSettings();" id="mob-cb-btn">👁 Colorblind</button>
+        <button class="util-btn" onclick="toggleEGPanel();toggleMobSettings();" id="mob-eg-btn">📊 EG Off</button>
+        <button class="util-btn" onclick="toggleTheme();toggleMobSettings();" id="mob-theme-btn">☀️ Light</button>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -899,6 +920,7 @@ function toggleTheme(){
   lightTheme = !lightTheme;
   document.body.classList.toggle('light', lightTheme);
   document.getElementById('theme-btn').textContent = lightTheme ? '🌙 Dark' : '☀️ Light';
+  if(typeof syncMobSettings==='function')syncMobSettings();
 }
 
 /* === BOARD === */
@@ -1068,6 +1090,7 @@ function toggleCB(){
   document.body.classList.toggle('cb',cbOn);
   document.getElementById('cb-btn').classList.toggle('on',cbOn);
   document.getElementById('cb-btn').textContent=cbOn?'👁 Default Mode':'👁 Colorblind';
+  if(typeof syncMobSettings==='function')syncMobSettings();
 }
 
 function toggleEGPanel(){
@@ -1077,6 +1100,7 @@ function toggleEGPanel(){
   const btn=document.getElementById('eg-btn');
   btn.textContent=egVisible?'📊 EG Off':'📊 EG On';
   btn.classList.toggle('on',!egVisible);
+  if(typeof syncMobSettings==='function')syncMobSettings();
 }
 
 function toggleEGExplainer(){
@@ -1435,6 +1459,22 @@ function toggleMobTally(){
   const content = document.getElementById('mob-tally-content');
   toggle.classList.toggle('open');
   content.classList.toggle('open');
+}
+
+/* === MOBILE SETTINGS GEAR === */
+function toggleMobSettings(){
+  const dd = document.getElementById('mob-settings-dd');
+  const gear = document.getElementById('mob-gear');
+  dd.classList.toggle('open');
+  gear.classList.toggle('open');
+}
+function syncMobSettings(){
+  const mcb = document.getElementById('mob-cb-btn');
+  const meg = document.getElementById('mob-eg-btn');
+  const mth = document.getElementById('mob-theme-btn');
+  if(mcb) mcb.textContent = document.getElementById('cb-btn').textContent;
+  if(meg) meg.textContent = document.getElementById('eg-btn').textContent;
+  if(mth) mth.textContent = document.getElementById('theme-btn').textContent;
 }
 
 // Hide game UI until mode is selected
