@@ -420,10 +420,101 @@ body.light .ss-dist{background:rgba(0,0,0,0.03);}
 .eg-tip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:12px;line-height:1.65;max-width:220px;z-index:800;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
 .eg-tip.show{display:block;}
 @media(max-width:780px){.left-panel,.right-panel{display:none;}}
+
+/* ===== LANDING SCREEN ===== */
+.landing{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity 0.4s;}
+.landing.hidden{opacity:0;pointer-events:none;}
+.landing-logo{font-family:'Archivo Black',sans-serif;font-size:42px;letter-spacing:-1px;text-align:center;}
+.landing-logo .dr{color:var(--red-ui);}.landing-logo .th{color:var(--text);}.landing-logo .ln{color:var(--blue-ui);}
+.landing-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:-12px;}
+.landing-choices{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;justify-content:center;}
+.landing-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 36px;border-radius:16px;border:2px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.2s;font-family:'Syne',sans-serif;color:var(--text);min-width:180px;}
+.landing-btn:hover{border-color:var(--blue-ui);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+body.light .landing-btn:hover{box-shadow:0 8px 30px rgba(0,0,0,0.1);}
+.landing-btn-icon{font-size:40px;}
+.landing-btn-title{font-family:'Archivo Black',sans-serif;font-size:16px;letter-spacing:-0.3px;}
+.landing-btn-sub{font-size:10px;color:var(--muted);}
+
+/* ===== MOBILE MODE ===== */
+body.mobile header{padding:5px 10px;}
+body.mobile .logo{font-size:15px;}
+body.mobile .logo-tag{font-size:7px;letter-spacing:1.5px;}
+body.mobile .header-right{gap:4px;}
+body.mobile .header-right .sbtn{font-size:9px;padding:3px 7px;}
+body.mobile .header-right .util-btn{font-size:8px;padding:3px 6px;}
+
+body.mobile .main{flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+body.mobile .left-panel,body.mobile .right-panel{display:none !important;}
+
+/* Mobile toolbar */
+.mob-toolbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:6px 10px;gap:5px;align-items:center;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;}
+body.mobile .mob-toolbar{display:flex;}
+.mob-brush{width:28px;height:28px;border-radius:6px;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:900;color:#fff;cursor:pointer;flex-shrink:0;transition:all 0.1s;}
+.mob-brush.on{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.2);}
+body.light .mob-brush.on{border-color:#333;box-shadow:0 0 8px rgba(0,0,0,0.15);}
+.mob-eraser{padding:4px 10px;border-radius:6px;border:2px solid transparent;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.mob-eraser.on{border-color:var(--text);color:var(--text);}
+.mob-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 2px;}
+.mob-count{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0;white-space:nowrap;}
+.mob-count.full{color:var(--green);}
+
+/* Mobile center area */
+body.mobile .center{padding:8px;gap:6px;}
+body.mobile .challenge-banner{padding:6px 10px;max-width:100%;}
+body.mobile .ch-label{font-size:8px;}
+body.mobile .ch-text{font-size:11px;}
+body.mobile .star-rating .star{font-size:14px;}
+
+body.mobile .board{grid-template-columns:repeat(5,46px);grid-template-rows:repeat(10,42px);gap:3px;padding:6px;border-radius:10px;}
+body.mobile .cell{border-radius:5px;border-width:2px;}
+body.mobile .cell .vlet{font-size:14px;}
+body.mobile .cell .d-badge{width:12px;height:12px;font-size:8px;top:2px;left:2px;}
+
+body.mobile .prog-wrap{max-width:260px;}
+body.mobile .btn-row{gap:4px;}
+body.mobile .btn-check{padding:8px 20px;font-size:13px;}
+body.mobile .btn-sm{padding:5px 10px;font-size:11px;}
+body.mobile .btn-tut{padding:5px 10px;font-size:11px;}
+
+/* Mobile tally (collapsible below board) */
+.mob-tally{display:none;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px;flex-shrink:0;}
+body.mobile .mob-tally{display:block;}
+.mob-tally-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:2px 0;margin-bottom:4px;}
+.mob-tally-toggle span{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.mob-tally-toggle .arrow{font-size:10px;color:var(--muted);transition:transform 0.2s;}
+.mob-tally-toggle.open .arrow{transform:rotate(180deg);}
+.mob-tally-content{display:none;gap:4px;flex-direction:column;}
+.mob-tally-content.open{display:flex;}
+.mob-tally-row{display:flex;align-items:center;gap:5px;font-size:11px;}
+.mob-tally-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.mob-tally-name{font-weight:700;flex:1;}
+.mob-tally-votes{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);}
+.mob-tally-win{font-size:10px;font-weight:800;}
+.mob-tally-win.red{color:var(--red-ui);}.mob-tally-win.blue{color:#5c94ff;}.mob-tally-win.none{color:var(--muted);}
+.mob-stats{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;justify-content:space-around;font-size:10px;color:var(--muted);}
+.mob-stats b{color:var(--text);}
 </style>
 </head>
 <body>
 <canvas id="confetti"></canvas>
+
+<!-- LANDING SCREEN -->
+<div class="landing" id="landing">
+  <div class="landing-logo"><span class="dr">Draw</span><span class="th">The</span><span class="ln">Line</span></div>
+  <div class="landing-tag">Gerrymandering Simulator · Class Edition</div>
+  <div class="landing-choices">
+    <div class="landing-btn" onclick="startMode('desktop')">
+      <div class="landing-btn-icon">💻</div>
+      <div class="landing-btn-title">PC / iPad / Mac</div>
+      <div class="landing-btn-sub">Full layout with side panels</div>
+    </div>
+    <div class="landing-btn" onclick="startMode('mobile')">
+      <div class="landing-btn-icon">📱</div>
+      <div class="landing-btn-title">Mobile</div>
+      <div class="landing-btn-sub">Optimized for phone screens</div>
+    </div>
+  </div>
+</div>
 
 <header>
   <div>
@@ -441,6 +532,9 @@ body.light .ss-dist{background:rgba(0,0,0,0.03);}
     <button class="util-btn" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
   </div>
 </header>
+
+<!-- MOBILE TOOLBAR -->
+<div class="mob-toolbar" id="mob-toolbar"></div>
 
 <div class="main">
   <!-- LEFT -->
@@ -533,6 +627,14 @@ body.light .ss-dist{background:rgba(0,0,0,0.03);}
       <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)"><span>Red 40%</span><span>Blue 60%</span></div>
       <div class="fair-note"><b>Proportionally fair:</b><br>3 Blue + 2 Red districts</div>
     </div>
+  </div>
+  <!-- MOBILE TALLY -->
+  <div class="mob-tally" id="mob-tally">
+    <div class="mob-tally-toggle" id="mob-tally-toggle" onclick="toggleMobTally()">
+      <span>Live Tally & Stats</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="mob-tally-content" id="mob-tally-content"></div>
   </div>
 </div>
 
@@ -841,6 +943,7 @@ function selectTool(t){
   document.getElementById('eraser-btn').classList.remove('on');
   if(t==='eraser')document.getElementById('eraser-btn').classList.add('on');
   else{const b=document.getElementById('db'+t);if(b)b.classList.add('on');}
+  updateMobToolbar();
 }
 
 function startPaint(i){painting=true;paintCell(i);}
@@ -911,6 +1014,7 @@ function updateCounts(){
   const rS=cnt.slice(1).filter((_,i)=>R[i+1]>B[i+1]&&cnt[i+1]===CPD).length;
   const bS=cnt.slice(1).filter((_,i)=>B[i+1]>R[i+1]&&cnt[i+1]===CPD).length;
   updateStarHint(rS,bS);
+  if(mobileMode)updateMobCounts();
 }
 
 function updateEGDisplay(s){
@@ -1231,7 +1335,111 @@ function closeScreenshotView(){
   document.getElementById('ss-overlay').classList.remove('show');
 }
 
-buildBoard();buildBrushes();buildTally();updateCounts();openTutorial();
+/* === LANDING / MODE SELECT === */
+let mobileMode = false;
+
+function startMode(mode){
+  document.getElementById('landing').classList.add('hidden');
+  setTimeout(()=>{ document.getElementById('landing').style.display='none'; },400);
+  document.querySelector('header').style.display='';
+  document.querySelector('.main').style.display='';
+
+  if(mode==='mobile'){
+    mobileMode = true;
+    document.body.classList.add('mobile');
+    buildMobToolbar();
+    buildMobTally();
+  }
+
+  buildBoard();buildBrushes();buildTally();updateCounts();openTutorial();
+}
+
+function buildMobToolbar(){
+  const bar = document.getElementById('mob-toolbar');
+  bar.innerHTML = '';
+  for(let d=1;d<=5;d++){
+    const btn = document.createElement('div');
+    btn.className = 'mob-brush' + (d===1?' on':'');
+    btn.id = 'mb'+d;
+    btn.style.background = DC[d];
+    btn.textContent = d;
+    btn.onclick = () => { selectTool(d); updateMobToolbar(); };
+    bar.appendChild(btn);
+
+    const cnt = document.createElement('span');
+    cnt.className = 'mob-count';
+    cnt.id = 'mc'+d;
+    cnt.textContent = '0/10';
+    bar.appendChild(cnt);
+  }
+  const div = document.createElement('div');
+  div.className = 'mob-divider';
+  bar.appendChild(div);
+
+  const er = document.createElement('div');
+  er.className = 'mob-eraser';
+  er.id = 'mob-eraser';
+  er.textContent = '✕ Eraser';
+  er.onclick = () => { selectTool('eraser'); updateMobToolbar(); };
+  bar.appendChild(er);
+}
+
+function updateMobToolbar(){
+  if(!mobileMode) return;
+  for(let d=1;d<=5;d++){
+    const btn = document.getElementById('mb'+d);
+    if(btn) btn.className = 'mob-brush' + (selTool===d?' on':'');
+  }
+  const er = document.getElementById('mob-eraser');
+  if(er) er.className = 'mob-eraser' + (selTool==='eraser'?' on':'');
+}
+
+function updateMobCounts(){
+  if(!mobileMode) return;
+  const s = getStats();
+  for(let d=1;d<=5;d++){
+    const cnt = document.getElementById('mc'+d);
+    if(cnt){
+      cnt.textContent = s.cnt[d]+'/10';
+      cnt.className = 'mob-count' + (s.cnt[d]===CPD?' full':'');
+    }
+  }
+  updateMobTallyContent();
+}
+
+function buildMobTally(){
+  updateMobTallyContent();
+}
+
+function updateMobTallyContent(){
+  if(!mobileMode) return;
+  const s = getStats();
+  const {cnt,R,B} = s;
+  const el = document.getElementById('mob-tally-content');
+  let html = '';
+  for(let d=1;d<=5;d++){
+    const w = cnt[d]===CPD ? (R[d]>B[d]?'RED':R[d]<B[d]?'BLUE':'TIE') : '?';
+    html += `<div class="mob-tally-row">
+      <div class="mob-tally-dot" style="background:${DC[d]}"></div>
+      <div class="mob-tally-name" style="color:${DC[d]}">D${d}</div>
+      <div class="mob-tally-votes">${cnt[d]?'R:'+R[d]+' B:'+B[d]:'–'}</div>
+      <div class="mob-tally-win ${w==='RED'?'red':w==='BLUE'?'blue':'none'}">${w}</div>
+    </div>`;
+  }
+  html += `<div class="mob-stats"><span>🔴 Red <b>20</b> (40%)</span><span>🔵 Blue <b>30</b> (60%)</span></div>`;
+  el.innerHTML = html;
+}
+
+function toggleMobTally(){
+  const toggle = document.getElementById('mob-tally-toggle');
+  const content = document.getElementById('mob-tally-content');
+  toggle.classList.toggle('open');
+  content.classList.toggle('open');
+}
+
+// Hide game UI until mode is selected
+document.querySelector('header').style.display = 'none';
+document.querySelector('.main').style.display = 'none';
 </script>
 </body>
 </html>
