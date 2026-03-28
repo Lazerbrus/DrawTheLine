@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrawTheLine – Gerrymandering Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rv-bg:#D91A2A; --bv-bg:#0f4fd4;
+  --bg:#0c0f18; --surface:#13172a; --surface2:#1a1f35; --border:#252c48;
+  --text:#eef0fa; --muted:#6b739e; --gold:#F5A623; --green:#00D68F;
+  --red-ui:#E8192C; --blue-ui:#1055F5;
+  --d1:#FF5C00; --d2:#9B2BF5; --d3:#00C9A7; --d4:#F5C400; --d5:#FF2D9B;
+}
+body.cb{ --rv-bg:#E07B00; --bv-bg:#5B2FC9; }
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;display:flex;flex-direction:column;}
+
+header{background:var(--surface);border-bottom:2px solid var(--border);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+.logo{font-family:'Archivo Black',sans-serif;font-size:20px;letter-spacing:-0.5px;}
+.logo .dr{color:var(--red-ui);}
+.logo .th{color:var(--text);}
+.logo .ln{color:var(--blue-ui);}
+.logo-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:-2px;}
+.header-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sbtn{padding:5px 11px;border-radius:18px;border:1.5px solid var(--border);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.14s;}
+.sbtn:hover{color:var(--text);}
+.sbtn.fair.on{color:#00D68F;border-color:#00D68F;background:rgba(0,214,143,0.1);}
+.sbtn.red.on{color:var(--red-ui);border-color:var(--red-ui);background:rgba(232,25,44,0.1);}
+.sbtn.blue.on{color:#5c94ff;border-color:#5c94ff;background:rgba(16,85,245,0.12);}
+.sbtn.free.on{color:var(--gold);border-color:var(--gold);background:rgba(245,166,35,0.1);}
+.util-btn{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.14s;white-space:nowrap;}
+.util-btn:hover{color:var(--text);border-color:var(--text);}
+.util-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(245,166,35,0.1);}
+
+.main{display:flex;flex:1;overflow:hidden;}
+.left-panel,.right-panel{width:196px;min-width:196px;background:var(--surface);display:flex;flex-direction:column;padding:11px;gap:9px;overflow-y:auto;}
+.left-panel{border-right:1px solid var(--border);}
+.right-panel{border-left:1px solid var(--border);}
+.ptitle{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+.dbrush{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;border:2px solid transparent;cursor:pointer;background:transparent;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:100%;transition:all 0.11s;}
+.dbrush:hover{background:rgba(255,255,255,0.04);}
+.dbrush.on{background:rgba(255,255,255,0.07);border-color:currentColor;}
+.dswatch{width:26px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.dcnt{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.dcnt.full{color:var(--green);}
+.eraser-btn{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:7px;border:2px solid transparent;cursor:pointer;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:100%;transition:all 0.11s;}
+.eraser-btn:hover{color:var(--text);}
+.eraser-btn.on{color:#fff;border-color:#fff;background:rgba(255,255,255,0.06);}
+
+.eg-panel{display:flex;flex-direction:column;gap:9px;}
+.eg-panel.hidden{display:none;}
+.eg-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px;}
+.eg-simple{background:rgba(0,214,143,0.06);border:1px solid rgba(0,214,143,0.2);border-radius:8px;padding:10px;font-size:11px;line-height:1.6;color:#a8f0d8;}
+.eg-simple .eg-formula{background:rgba(0,0,0,0.3);border-radius:5px;padding:5px 8px;margin:6px 0;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);text-align:center;}
+.eg-simple .eg-threshold{margin-top:6px;padding:5px 8px;background:rgba(232,25,44,0.1);border-radius:5px;font-size:10px;color:#f5a0a0;}
+.eg-score{font-family:'Archivo Black',sans-serif;font-size:36px;text-align:center;transition:color 0.4s;line-height:1;}
+.eg-sublabel{font-size:10px;color:var(--muted);text-align:center;margin:2px 0 7px;}
+.eg-track{height:10px;background:var(--border);border-radius:5px;overflow:visible;position:relative;margin-bottom:4px;}
+.eg-track-fill{height:100%;border-radius:5px;transition:all 0.4s;position:absolute;top:0;}
+.eg-needle{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;border-radius:2px;transition:left 0.4s;transform:translateX(-50%);z-index:2;}
+.eg-thresh-l{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(255,100,100,0.6);left:calc(50% - 25%);border-radius:1px;}
+.eg-thresh-r{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(255,100,100,0.6);left:calc(50% + 25%);border-radius:1px;}
+.eg-ends{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px;}
+.eg-badge{padding:5px 8px;border-radius:6px;font-size:11px;font-weight:700;text-align:center;}
+.wasted-row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;}
+.wasted-row .wl{color:var(--muted);}
+.perfect-zone{margin-top:7px;padding:7px 9px;border-radius:7px;background:rgba(0,214,143,0.06);border:1px dashed rgba(0,214,143,0.3);font-size:10px;color:var(--green);line-height:1.5;display:none;}
+.perfect-zone.show{display:block;}
+
+.timer-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:9px;}
+.timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.timer-label{font-size:11px;font-weight:700;color:var(--muted);}
+.toggle{width:30px;height:17px;background:var(--border);border-radius:9px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;background:var(--muted);border-radius:50%;transition:all 0.2s;}
+.toggle.on{background:var(--green);}
+.toggle.on::after{left:15px;background:#fff;}
+.timer-num{font-family:'Archivo Black',sans-serif;font-size:40px;text-align:center;letter-spacing:1px;line-height:1;transition:color 0.3s;}
+.timer-num.alert{color:var(--red-ui);animation:blink 0.5s infinite alternate;}
+@keyframes blink{from{opacity:1}to{opacity:0.4}}
+.timer-presets{display:flex;gap:3px;margin-top:4px;}
+.tpreset{flex:1;padding:3px;border:1px solid var(--border);background:transparent;border-radius:4px;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.11s;}
+.tpreset:hover{color:var(--text);}
+.tpreset.on{border-color:var(--green);color:var(--green);background:rgba(0,214,143,0.08);}
+.streak-box{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.3);border-radius:9px;padding:7px 10px;display:none;align-items:center;gap:8px;}
+.streak-fire{font-size:20px;}
+.streak-text{font-size:10px;font-weight:700;color:var(--gold);}
+.streak-num{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--gold);}
+
+.center{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;gap:9px;overflow-y:auto;}
+.challenge-banner{width:100%;max-width:440px;border-radius:10px;padding:9px 15px;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,0.03);}
+.ch-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.ch-text{font-size:13px;font-weight:700;}
+.star-rating{display:flex;justify-content:center;gap:4px;margin-top:4px;}
+.star{font-size:17px;opacity:0.2;transition:opacity 0.3s,transform 0.3s;}
+.star.lit{opacity:1;}
+
+.board{display:grid;grid-template-columns:repeat(5,54px);grid-template-rows:repeat(10,50px);gap:4px;padding:9px;background:var(--surface);border:2px solid var(--border);border-radius:12px;user-select:none;}
+.cell{border-radius:7px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;border:3px solid transparent;transition:transform 0.07s,filter 0.08s;overflow:hidden;}
+.cell:hover{transform:scale(1.08);filter:brightness(1.1);z-index:10;}
+.cell.rv{background:var(--rv-bg);}
+.cell.bv{background:var(--bv-bg);}
+.cell.rv .cb-pattern{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.18),rgba(255,255,255,0.18) 2px,transparent 2px,transparent 7px);}
+.cell.bv .cb-pattern{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s;background:radial-gradient(circle,rgba(255,255,255,0.25) 1.5px,transparent 1.5px) 0 0/7px 7px;}
+body.cb .cell .cb-pattern{opacity:1;}
+.cell .vlet{font-family:'Archivo Black',sans-serif;font-size:17px;color:rgba(255,255,255,0.95);position:relative;z-index:2;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,0.35);}
+.cell .cb-shape{position:absolute;bottom:3px;right:3px;font-size:9px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:3;}
+body.cb .cell .cb-shape{opacity:0.8;}
+.cell .d-ov{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.2s;border-radius:4px;z-index:1;}
+.cell.assigned .d-ov{opacity:0.22;}
+.cell .d-badge{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center;z-index:4;}
+.cell.assigned .d-badge{display:flex;}
+.cell[data-d="1"]{border-color:var(--d1);}
+.cell[data-d="2"]{border-color:var(--d2);}
+.cell[data-d="3"]{border-color:var(--d3);}
+.cell[data-d="4"]{border-color:var(--d4);}
+.cell[data-d="5"]{border-color:var(--d5);}
+
+.prog-wrap{width:100%;max-width:280px;}
+.prog-top{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;}
+.prog-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.25s;background:linear-gradient(90deg,var(--d1),var(--d5));}
+
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.btn-check{background:linear-gradient(135deg,var(--blue-ui),#4f8ef7);color:#fff;border:none;padding:10px 28px;border-radius:8px;font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:1px;cursor:pointer;transition:all 0.14s;}
+.btn-check:hover{transform:scale(1.03);}
+.btn-check:disabled{opacity:0.28;cursor:not-allowed;transform:none;}
+.btn-sm{background:transparent;color:var(--muted);border:1px solid var(--border);padding:7px 13px;border-radius:7px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:color 0.14s;}
+.btn-sm:hover{color:var(--text);border-color:var(--muted);}
+.btn-tut{background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.35);padding:7px 13px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.14s;}
+.btn-tut:hover{background:rgba(245,166,35,0.22);}
+
+.tally-row{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:7px;background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+.td{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.tn{font-size:12px;font-weight:700;flex:1;}
+.tm{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.tw{font-size:11px;font-weight:800;padding:1px 5px;border-radius:4px;}
+.tw.red{background:rgba(232,25,44,0.2);color:var(--red-ui);}
+.tw.blue{background:rgba(16,85,245,0.18);color:#5c94ff;}
+.tw.none{color:var(--muted);}
+.stats-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;}
+.srow{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;}
+.slabel{color:var(--muted);}
+.sval.red{color:var(--red-ui);font-weight:700;}
+.sval.blue{color:#5c94ff;font-weight:700;}
+.split-bar{height:7px;background:var(--border);border-radius:3px;overflow:hidden;display:flex;margin:5px 0;}
+.split-r{background:var(--rv-bg);}
+.split-b{background:var(--bv-bg);}
+.fair-note{margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
+.fair-note b{color:var(--text);}
+
+.tut-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:center;justify-content:center;}
+.tut-overlay.show{display:flex;}
+.tut-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:480px;width:92%;}
+.tut-counter{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.tut-h{font-family:'Archivo Black',sans-serif;font-size:26px;margin-bottom:10px;letter-spacing:-0.5px;}
+.tut-visual{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;min-height:80px;}
+.tut-body{font-size:13px;line-height:1.7;color:#b8bede;margin-bottom:16px;}
+.tut-body strong{color:var(--text);}
+.tut-nav{display:flex;justify-content:space-between;align-items:center;}
+.tut-dots{display:flex;gap:5px;}
+.tdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:background 0.2s;}
+.tdot.on{background:var(--text);}
+.tbt{padding:8px 18px;border-radius:7px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.14s;}
+.tbt.prev{background:var(--border);color:var(--muted);}
+.tbt.prev:hover{color:var(--text);}
+.tbt.next{background:linear-gradient(135deg,var(--blue-ui),#4f8ef7);color:#fff;}
+.tbt.finish{background:linear-gradient(135deg,var(--green),var(--blue-ui));color:#fff;}
+.mg{display:grid;grid-template-columns:repeat(5,20px);grid-template-rows:repeat(4,20px);gap:2px;}
+.mc{border-radius:3px;border:2px solid transparent;position:relative;display:flex;align-items:center;justify-content:center;}
+.mc.r{background:#D91A2A;}.mc.b{background:#0f4fd4;}
+.mc.d1{border-color:var(--d1);}.mc.d2{border-color:var(--d2);}.mc.d3{border-color:var(--d3);}.mc.d4{border-color:var(--d4);}
+.mc-l{font-family:'Archivo Black',sans-serif;font-size:8px;color:rgba(255,255,255,0.9);}
+
+.res-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:flex-start;justify-content:center;overflow-y:auto;padding:14px;}
+.res-overlay.show{display:flex;}
+.res-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:26px 30px;max-width:520px;width:100%;text-align:center;margin:auto;}
+.res-title{font-family:'Archivo Black',sans-serif;font-size:48px;letter-spacing:-1px;margin-bottom:2px;line-height:1;}
+.res-title.red{color:var(--red-ui);}.res-title.blue{color:#5c94ff;}.res-title.tie{color:var(--gold);}
+.res-sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+.stars-result{display:flex;justify-content:center;gap:7px;margin-bottom:12px;}
+.star-big{font-size:30px;opacity:0.2;transition:all 0.4s;}
+.star-big.lit{opacity:1;animation:starpop 0.4s ease;}
+@keyframes starpop{0%{transform:scale(0.4)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+.perfect-crime{display:none;margin-bottom:14px;background:linear-gradient(135deg,rgba(0,214,143,0.12),rgba(245,166,35,0.08));border:2px solid var(--green);border-radius:12px;padding:14px 16px;animation:glow-pulse 1.5s infinite alternate;}
+.perfect-crime.show{display:block;}
+.pc-title{font-family:'Archivo Black',sans-serif;font-size:22px;color:var(--green);letter-spacing:-0.5px;margin-bottom:4px;}
+.pc-subtitle{font-size:12px;color:#a0f0d0;line-height:1.55;}
+.pc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,214,143,0.15);border:1px solid rgba(0,214,143,0.4);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--green);margin-top:8px;}
+@keyframes glow-pulse{from{box-shadow:0 0 8px rgba(0,214,143,0.2)}to{box-shadow:0 0 22px rgba(0,214,143,0.5)}}
+.achievement{background:rgba(245,166,35,0.1);border:1.5px solid rgba(245,166,35,0.4);border-radius:10px;padding:9px 13px;margin-bottom:12px;display:none;align-items:center;gap:11px;}
+.achievement.show{display:flex;}
+.ach-icon{font-size:26px;}
+.ach-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;}
+.ach-name{font-family:'Archivo Black',sans-serif;font-size:15px;color:#fff;}
+.news-box{background:#0a0a0a;border:2px solid var(--red-ui);border-radius:10px;overflow:hidden;margin-bottom:12px;display:none;}
+.news-box.show{display:block;}
+.news-ticker-label{background:var(--red-ui);color:#fff;font-family:'Archivo Black',sans-serif;font-size:10px;letter-spacing:1px;padding:3px 10px;display:inline-block;}
+.news-headline{padding:9px 13px;font-family:'Archivo Black',sans-serif;font-size:14px;line-height:1.4;color:#fff;background:#111;}
+.news-sub{padding:3px 13px 9px;font-size:11px;color:#888;}
+.res-dlist{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;text-align:left;}
+.res-drow{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid var(--border);opacity:0;transform:translateX(-20px);transition:opacity 0.4s,transform 0.4s;}
+.res-drow:last-child{border-bottom:none;}
+.res-drow.in{opacity:1;transform:translateX(0);}
+.res-ddot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.res-dname{font-size:12px;font-weight:700;flex:1;}
+.res-bar{flex:1.4;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.res-bar-fill{height:100%;border-radius:3px;width:0%;transition:width 0.6s;}
+.res-dvotes{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);min-width:60px;text-align:right;}
+.res-dwin{font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;min-width:42px;text-align:center;}
+.res-dwin.red{background:rgba(232,25,44,0.2);color:var(--red-ui);}
+.res-dwin.blue{background:rgba(16,85,245,0.18);color:#5c94ff;}
+.res-dwin.pend{background:var(--border);color:var(--muted);}
+
+/* EG result box with optional toggle */
+.eg-res{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;text-align:left;}
+.eg-res-header{display:flex;align-items:center;justify-content:space-between;}
+.eg-res-title{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.eg-res-toggle{font-size:9px;background:var(--border);border:none;border-radius:4px;color:var(--muted);padding:2px 7px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;}
+.eg-res-toggle:hover{color:var(--text);}
+.eg-res-content{margin-top:9px;}
+.eg-res-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.eg-res-stat{background:rgba(255,255,255,0.03);border-radius:7px;padding:7px 10px;}
+.eg-res-num{font-family:'Archivo Black',sans-serif;font-size:22px;line-height:1;}
+.eg-res-desc{font-size:10px;color:var(--muted);margin-top:1px;}
+
+.res-feedback{padding:10px 13px;border-radius:9px;margin-bottom:12px;font-size:13px;line-height:1.6;display:none;}
+.res-feedback.show{display:block;}
+.res-feedback.good{background:rgba(0,214,143,0.08);border:1px solid rgba(0,214,143,0.3);color:var(--green);}
+.res-feedback.warn{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.3);color:var(--gold);}
+.res-feedback.info{background:rgba(16,85,245,0.08);border:1px solid rgba(16,85,245,0.3);color:#5c94ff;}
+.close-row{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
+.btn-close{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.14s;font-family:'Syne',sans-serif;}
+.btn-close:hover{border-color:var(--text);}
+
+.tu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:700;align-items:center;justify-content:center;}
+.tu-overlay.show{display:flex;}
+.tu-card{background:var(--surface);border:3px solid var(--red-ui);border-radius:16px;padding:32px;text-align:center;max-width:340px;animation:shake 0.4s ease;}
+.tu-h{font-family:'Archivo Black',sans-serif;font-size:52px;color:var(--red-ui);letter-spacing:-2px;line-height:1;}
+.tu-sub{color:var(--muted);font-size:12px;margin:7px 0 20px;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:900;}
+.eg-tip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:12px;line-height:1.65;max-width:220px;z-index:800;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+.eg-tip.show{display:block;}
+@media(max-width:780px){.left-panel,.right-panel{display:none;}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<header>
+  <div>
+    <div class="logo"><span class="dr">Draw</span><span class="th">The</span><span class="ln">Line</span></div>
+    <div class="logo-tag">Gerrymandering Simulator · Class Edition</div>
+  </div>
+  <div class="header-right">
+    <button class="sbtn fair on" id="s-fair" onclick="setScenario('fair')">⚖️ Fair</button>
+    <button class="sbtn red"  id="s-red"  onclick="setScenario('red')">🔴 Gerrymander Red</button>
+    <button class="sbtn blue" id="s-blue" onclick="setScenario('blue')">🔵 Gerrymander Blue</button>
+    <button class="sbtn free" id="s-free" onclick="setScenario('free')">🎲 Free</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
+    <button class="util-btn" id="cb-btn" onclick="toggleCB()">👁 Colorblind</button>
+    <button class="util-btn" id="eg-btn" onclick="toggleEGPanel()">📊 EG Off</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="ptitle">District Brush</div>
+    <div id="brushes"></div>
+    <button class="eraser-btn" id="eraser-btn" onclick="selectTool('eraser')">✕ &nbsp;Eraser</button>
+
+    <div class="ptitle" style="margin-top:4px" id="eg-panel-title">Efficiency Gap</div>
+    <div class="eg-panel" id="eg-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:10px;font-weight:700;color:#a8f0d8;">What is the EG?</span>
+        <button id="eg-explain-btn" onclick="toggleEGExplainer()" style="font-size:9px;background:rgba(0,214,143,0.15);border:1px solid rgba(0,214,143,0.35);border-radius:4px;color:var(--green);padding:2px 7px;cursor:pointer;font-family:Syne,sans-serif;font-weight:700;">▼ Show</button>
+      </div>
+      <div class="eg-simple" id="eg-explainer" style="display:none">
+        In a race, any votes you win <em>by more than you needed</em> are wasted. So are all your losing votes.<br>
+        <div class="eg-formula">EG = (Wasted Red − Wasted Blue) ÷ 50</div>
+        If one party wastes far more votes, the map was probably rigged.
+        <div class="eg-threshold">⚠️ Courts say anything above ±10% is a gerrymander.</div>
+      </div>
+      <div class="eg-box">
+        <div class="eg-score" id="eg-score" style="color:var(--muted)">–</div>
+        <div class="eg-sublabel" id="eg-sub">Assign cells to see score</div>
+        <div class="eg-track">
+          <div class="eg-track-fill" id="eg-fill" style="width:0%;background:var(--border)"></div>
+          <div class="eg-needle" id="eg-needle" style="left:50%"></div>
+          <div class="eg-thresh-l"></div>
+          <div class="eg-thresh-r"></div>
+        </div>
+        <div class="eg-ends"><span>← Red</span><span style="color:rgba(255,100,100,0.7);font-size:8px">±10% line</span><span>Blue →</span></div>
+        <div class="eg-badge" id="eg-badge" style="background:rgba(255,255,255,0.04);color:var(--muted)">Start drawing to see the score</div>
+        <div style="margin-top:7px;border-top:1px solid var(--border);padding-top:7px;">
+          <div class="wasted-row"><span class="wl">🔴 Red wasted</span><span id="wr">–</span></div>
+          <div class="wasted-row"><span class="wl">🔵 Blue wasted</span><span id="wb">–</span></div>
+        </div>
+        <div class="perfect-zone" id="pz-hint">
+          🕵️ <b>You're in the safe zone!</b><br>Skewed enough to change the result — but under 10%, so it could pass legal scrutiny. Can you hold it there?
+        </div>
+      </div>
+    </div>
+
+    <div class="ptitle">Timer Mode</div>
+    <div class="timer-box">
+      <div class="timer-row">
+        <span class="timer-label">Enable timer</span>
+        <div class="toggle" id="tog" onclick="toggleTimer()"></div>
+      </div>
+      <div class="timer-num" id="tnum">2:00</div>
+      <div class="timer-presets">
+        <button class="tpreset"    id="tp240" onclick="setTimerPreset(240)">4m</button>
+        <button class="tpreset"    id="tp180" onclick="setTimerPreset(180)">3m</button>
+        <button class="tpreset on" id="tp120" onclick="setTimerPreset(120)">2m</button>
+        <button class="tpreset"    id="tp45"  onclick="setTimerPreset(45)">45s</button>
+      </div>
+    </div>
+    <div class="streak-box" id="streak-box">
+      <div class="streak-fire">🔥</div>
+      <div><div class="streak-text">WIN STREAK</div><div class="streak-num" id="streak-num">0</div></div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div class="challenge-banner">
+      <div class="ch-label">Your Mission</div>
+      <div class="ch-text" id="ch-text">Draw 5 fair districts reflecting the 60/40 popular vote split. Aim for 3 Blue + 2 Red.</div>
+      <div class="star-rating"><span class="star" id="st1">⭐</span><span class="star" id="st2">⭐</span><span class="star" id="st3">⭐</span></div>
+    </div>
+    <div class="board" id="board" onmouseleave="stopPaint()"></div>
+    <div class="prog-wrap">
+      <div class="prog-top"><span>Cells assigned</span><span id="prog-txt">0 / 50</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-check" id="btn-check" onclick="checkResults()" disabled>CHECK RESULTS</button>
+      <button class="btn-sm" onclick="resetGrid()">↺ Reset</button>
+      <button class="btn-tut" onclick="openTutorial()">📖 Tutorial</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="ptitle">Live Tally</div>
+    <div id="tally"></div>
+    <div class="ptitle" style="margin-top:4px">Vote Share</div>
+    <div class="stats-box">
+      <div class="srow"><span class="slabel">🔴 Red voters</span><span class="sval red">20 (40%)</span></div>
+      <div class="srow"><span class="slabel">🔵 Blue voters</span><span class="sval blue">30 (60%)</span></div>
+      <div class="split-bar"><div class="split-r" style="width:40%"></div><div class="split-b" style="width:60%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted)"><span>Red 40%</span><span>Blue 60%</span></div>
+      <div class="fair-note"><b>Proportionally fair:</b><br>3 Blue + 2 Red districts</div>
+    </div>
+  </div>
+</div>
+
+<!-- EG Tooltip -->
+<div class="eg-tip" id="eg-tip">
+  <strong style="color:var(--text)">Efficiency Gap</strong><br><br>
+  Think of it like a race: winning by more than you needed wastes your extra votes. All losing votes are also wasted.<br><br>
+  <strong style="color:var(--gold)">EG = (Red wasted − Blue wasted) ÷ 50 voters</strong><br><br>
+  Courts consider &gt;±10% evidence of gerrymandering.
+</div>
+
+<!-- TUTORIAL -->
+<div class="tut-overlay" id="tut-overlay">
+  <div class="tut-card">
+    <div class="tut-counter" id="tut-ctr">Step 1 of 6</div>
+    <div class="tut-h" id="tut-h"></div>
+    <div id="tut-content"></div>
+    <div class="tut-nav">
+      <div class="tut-dots" id="tut-dots"></div>
+      <div style="display:flex;gap:6px">
+        <button class="tbt prev" id="tbt-prev" onclick="tutNav(-1)">← Back</button>
+        <button class="tbt next" id="tbt-next" onclick="tutNav(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMES UP -->
+<div class="tu-overlay" id="tu-overlay">
+  <div class="tu-card">
+    <div class="tu-h">TIME'S UP!</div>
+    <div class="tu-sub" id="tu-sub">You filled 0 of 50 cells.</div>
+    <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-close" onclick="closeTU();checkResults()">See Results</button>
+      <button class="btn-close" onclick="closeTU();resetGrid()">↺ Try Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="res-overlay" id="res-overlay">
+  <div class="res-card">
+    <div class="res-title" id="res-title">BLUE WINS!</div>
+    <div class="res-sub" id="res-sub">3 districts to 2</div>
+    <div class="stars-result"><span class="star-big" id="rs1">⭐</span><span class="star-big" id="rs2">⭐</span><span class="star-big" id="rs3">⭐</span></div>
+    <div class="perfect-crime" id="perfect-crime">
+      <div class="pc-title">🕵️ THE PERFECT GERRYMANDER!</div>
+      <div class="pc-subtitle">You changed the election result — but kept the Efficiency Gap under the 10% legal threshold. In real life, this map might never get challenged in court. You got away with it! 🎉</div>
+      <div class="pc-badge">🏅 Achievement: Master of Disguise</div>
+    </div>
+    <div class="achievement" id="achievement">
+      <div class="ach-icon" id="ach-icon">🏆</div>
+      <div><div class="ach-label">Achievement Unlocked</div><div class="ach-name" id="ach-name">Democracy Hero</div></div>
+    </div>
+    <div class="news-box" id="news-box">
+      <span class="news-ticker-label">📰 BREAKING NEWS</span>
+      <div class="news-headline" id="news-headline"></div>
+      <div class="news-sub" id="news-sub"></div>
+    </div>
+    <div class="res-dlist" id="res-dlist"></div>
+    <div class="eg-res" id="eg-res"></div>
+    <div class="res-feedback" id="res-feedback"></div>
+    <div class="close-row">
+      <button class="btn-close" onclick="closeResult()">← Keep Drawing</button>
+      <button class="btn-close" onclick="resetGrid();closeResult()">↺ Try Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DC=['','#FF5C00','#9B2BF5','#00C9A7','#F5C400','#FF2D9B'];
+const CELLS=50,CPD=10;
+const voters=[];
+for(let r=0;r<10;r++) for(let c=0;c<5;c++) voters.push(c<2?'R':'B');
+
+let assignments=new Array(CELLS).fill(0),selTool=1,painting=false,scenario='fair';
+let timerOn=false,timerDur=120,timerRem=120,timerTick=null;
+let tutIdx=0,streak=0,cbOn=false,egVisible=true;
+
+const tutData=[
+  {h:'What is Gerrymandering?',
+   body:`<strong>Gerrymandering</strong> means drawing the boundaries of voting districts in a sneaky way — to give one political party more seats than their vote share deserves.<br><br>It's been going on since 1812, when Massachusetts Governor <strong>Elbridge Gerry</strong> signed a district so weirdly shaped it looked like a salamander. The name stuck!`,
+   vis:`<div style="text-align:center"><div style="font-size:52px;animation:wobble 2s ease-in-out infinite">🦎</div><div style="font-size:11px;color:var(--muted);margin-top:8px">The original "Gerry-mander" district, 1812</div></div><style>@keyframes wobble{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}</style>`},
+  {h:'The 60/40 Problem',
+   body:`In this game, <strong style="color:#5c94ff">Blue has 60%</strong> of voters and <strong style="color:var(--red-ui)">Red has 40%</strong>.<br><br>If the map is drawn <em>fairly</em>, Blue wins 3 districts and Red wins 2 — that reflects the actual vote. But by drawing lines cleverly, the minority party can win the majority of seats.`,
+   vis:`<div style="display:flex;gap:20px;align-items:center;justify-content:center"><div><div class="mg">${[...Array(20)].map((_,i)=>`<div class="mc ${i<8?'r':'b'}"><div class="mc-l">${i<8?'R':'B'}</div></div>`).join('')}</div><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:5px">50 voters</div></div><div style="font-size:24px">→</div><div style="text-align:center"><div style="font-family:'Archivo Black',sans-serif;font-size:22px;color:#5c94ff">3 Blue</div><div style="color:var(--muted);font-size:12px">+</div><div style="font-family:'Archivo Black',sans-serif;font-size:22px;color:var(--red-ui)">2 Red</div><div style="font-size:10px;color:var(--muted);margin-top:3px">= fair result</div></div></div>`},
+  {h:'Packing & Cracking',
+   body:`Two classic tricks:<br><br>🟥 <strong>Packing</strong> — cram your opponent's voters into 1 or 2 districts. They win those seats <em>massively</em> — but only once each.<br><br>💛 <strong>Cracking</strong> — split your opponent's voters between lots of districts so they're always the <em>minority</em> in each one and never win.`,
+   vis:`<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center"><div><div style="font-size:10px;font-weight:700;color:var(--red-ui);margin-bottom:4px;text-align:center">🟥 PACKING — cram them in</div><div class="mg">${['b','b','b','b','b','b','b','b','b','b','r','r','b','r','r','r','r','r','r','r'].map((v,i)=>`<div class="mc ${v} ${i<10?'d1':'d2'}"><div class="mc-l">${v.toUpperCase()}</div></div>`).join('')}</div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Blue wins D1 by loads — only counts once</div></div><div><div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;text-align:center">💛 CRACKING — spread them thin</div><div class="mg">${[...Array(20)].map((_,i)=>{const v=i%5<2?'r':'b';return`<div class="mc ${v} d${Math.floor(i/5)+1}"><div class="mc-l">${v.toUpperCase()}</div></div>`}).join('')}</div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Blue voters always outnumbered in every row</div></div></div>`},
+  {h:'The Efficiency Gap — Simply',
+   body:`Imagine a race. If you win by <em>more than you needed to</em>, those extra votes were <strong>wasted</strong>. All your losing votes were also wasted.<br><br>The Efficiency Gap counts up wasted votes for each side and compares them.<br><br><strong style="color:var(--gold)">EG = (Wasted Red − Wasted Blue) ÷ 50</strong><br><br>Courts say anything above <strong>±10%</strong> is suspicious.`,
+   vis:`<div style="width:100%;text-align:center"><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Example: District ends 8 Blue – 2 Red</div><div style="display:flex;gap:14px;justify-content:center"><div style="background:rgba(217,26,42,0.12);border:1px solid rgba(217,26,42,0.4);border-radius:8px;padding:9px 14px;text-align:center;flex:1"><div style="font-family:'Archivo Black',sans-serif;font-size:28px;color:var(--red-ui)">2</div><div style="font-size:10px;color:var(--muted)">Red wasted<br>(lost every vote)</div></div><div style="background:rgba(16,85,245,0.12);border:1px solid rgba(16,85,245,0.3);border-radius:8px;padding:9px 14px;text-align:center;flex:1"><div style="font-family:'Archivo Black',sans-serif;font-size:28px;color:#5c94ff">3</div><div style="font-size:10px;color:var(--muted)">Blue wasted<br>(won by 3 extra)</div></div></div><div style="margin-top:10px;font-size:11px;color:var(--muted)">Winning by too much = wasting votes</div></div>`},
+  {h:'The Perfect Gerrymander 🕵️',
+   body:`The secret challenge: can you <strong>rig the result</strong> while <strong>keeping the Efficiency Gap under 10%</strong>?<br><br>If you do, you've pulled off the <em>Perfect Gerrymander</em> — a map so cleverly disguised that a court might not even catch it. This is exactly what real political mapmakers try to do.<br><br>Watch the EG meter as you draw. Stay below ±10% and change the election. 🏅`,
+   vis:`<div style="text-align:center"><div style="font-size:40px;margin-bottom:8px">🕵️🗺️⚖️</div><div style="background:linear-gradient(135deg,rgba(0,214,143,0.1),rgba(245,166,35,0.08));border:1.5px solid var(--green);border-radius:10px;padding:10px 14px;font-size:12px;color:#a8f0d8;line-height:1.6"><b style="color:var(--green)">Goal:</b> Win more seats than your vote share deserves...<br>...but keep EG score between −10% and +10%.<br><b style="color:var(--gold)">That's the perfect crime.</b></div></div>`},
+  {h:'How to Play',
+   body:`<strong>1.</strong> Pick a <strong>District brush</strong> (1–5) on the left<br><strong>2.</strong> Click and drag cells on the board to assign them<br><strong>3.</strong> Each district needs exactly <strong>10 cells</strong> — fill all 50<br><strong>4.</strong> Hit <strong>Check Results</strong> for the big reveal<br><br>Try all three scenarios. Can you figure out how to gerrymander while keeping the EG under 10%? Can you explain <em>why</em> the shapes you drew helped your side win?`,
+   vis:`<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center">${[1,2,3,4,5].map(d=>`<div style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:7px 10px"><div style="width:22px;height:16px;border-radius:3px;background:${DC[d]};display:flex;align-items:center;justify-content:center;font-family:'Archivo Black',sans-serif;font-size:9px;color:#fff">${d}</div><span style="font-size:11px;font-weight:700;color:${DC[d]}">D${d}</span></div>`).join('')}</div>`}
+];
+
+function buildBoard(){
+  const board=document.getElementById('board');board.innerHTML='';
+  for(let i=0;i<CELLS;i++){
+    const cell=document.createElement('div');
+    cell.className='cell '+(voters[i]==='R'?'rv':'bv');
+    cell.dataset.i=i;
+    const cbp=document.createElement('div');cbp.className='cb-pattern';cell.appendChild(cbp);
+    const vl=document.createElement('span');vl.className='vlet';vl.textContent=voters[i];cell.appendChild(vl);
+    const cbs=document.createElement('span');cbs.className='cb-shape';cbs.textContent=voters[i]==='R'?'●':'■';cell.appendChild(cbs);
+    const dov=document.createElement('div');dov.className='d-ov';cell.appendChild(dov);
+    const db=document.createElement('div');db.className='d-badge';cell.appendChild(db);
+    cell.addEventListener('mousedown',e=>{e.preventDefault();startPaint(i);});
+    cell.addEventListener('mouseenter',()=>{if(painting)paintCell(i);});
+    cell.addEventListener('mouseup',stopPaint);
+    cell.addEventListener('touchstart',e=>{e.preventDefault();startPaint(i);painting=true;},{passive:false});
+    cell.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0],el=document.elementFromPoint(t.clientX,t.clientY);if(el&&el.dataset.i!==undefined)paintCell(+el.dataset.i);},{passive:false});
+    cell.addEventListener('touchend',stopPaint);
+    board.appendChild(cell);
+  }
+}
+
+function buildBrushes(){
+  const el=document.getElementById('brushes');el.innerHTML='';
+  for(let d=1;d<=5;d++){
+    const b=document.createElement('button');b.className='dbrush'+(d===1?' on':'');b.id='db'+d;b.style.color=DC[d];
+    b.innerHTML=`<div class="dswatch" style="background:${DC[d]}">${d}</div>District ${d}<span class="dcnt" id="dc${d}">0/10</span>`;
+    b.onclick=()=>selectTool(d);el.appendChild(b);
+  }
+}
+
+function buildTally(){
+  const el=document.getElementById('tally');el.innerHTML='';
+  for(let d=1;d<=5;d++) el.innerHTML+=`<div class="tally-row"><div class="td" style="background:${DC[d]}"></div><div class="tn" style="color:${DC[d]}">D${d}</div><div class="tm" id="tm${d}">–</div><div class="tw none" id="tw${d}">–</div></div>`;
+}
+
+function selectTool(t){
+  selTool=t;
+  document.querySelectorAll('.dbrush').forEach(b=>b.classList.remove('on'));
+  document.getElementById('eraser-btn').classList.remove('on');
+  if(t==='eraser')document.getElementById('eraser-btn').classList.add('on');
+  else{const b=document.getElementById('db'+t);if(b)b.classList.add('on');}
+}
+
+function startPaint(i){painting=true;paintCell(i);}
+function stopPaint(){painting=false;}
+
+function paintCell(i){
+  if(!painting)return;
+  if(selTool==='eraser'){assignments[i]=0;}
+  else{
+    const d=selTool,cnt=assignments.filter(x=>x===d).length;
+    if(assignments[i]!==d){if(assignments[i]===0&&cnt>=CPD)return;assignments[i]=d;}
+  }
+  renderCell(i);updateCounts();
+}
+
+function renderCell(i){
+  const cell=document.getElementById('board').children[i];
+  const d=assignments[i];
+  cell.className='cell '+(voters[i]==='R'?'rv':'bv')+(d?' assigned':'');
+  cell.dataset.d=d||'';
+  const dov=cell.querySelector('.d-ov'),db=cell.querySelector('.d-badge');
+  if(d){dov.style.background=DC[d];dov.style.opacity='0.24';db.style.background=DC[d];db.textContent=d;db.style.display='flex';}
+  else{dov.style.opacity='0';db.style.display='none';}
+}
+
+function getStats(){
+  const cnt=[0,0,0,0,0,0],R=[0,0,0,0,0,0],B=[0,0,0,0,0,0];
+  for(let i=0;i<CELLS;i++){const d=assignments[i];if(!d)continue;cnt[d]++;if(voters[i]==='R')R[d]++;else B[d]++;}
+  return{cnt,R,B};
+}
+
+function wasted(r,b){const thr=Math.ceil((r+b)/2);return r>b?{wr:r-thr,wb:b}:{wr:r,wb:b-thr};}
+
+function calcEG(s){
+  const{cnt,R,B}=s;
+  if(cnt.slice(1).some(c=>c!==CPD))return null;
+  let twr=0,twb=0;
+  for(let d=1;d<=5;d++){const{wr,wb}=wasted(R[d],B[d]);twr+=wr;twb+=wb;}
+  return{eg:(twr-twb)/CELLS,twr,twb};
+}
+
+function calcEGLive(s){
+  const{cnt,R,B}=s;
+  if(cnt.slice(1).reduce((a,b)=>a+b,0)===0)return null;
+  let twr=0,twb=0;
+  for(let d=1;d<=5;d++){
+    if(!cnt[d])continue;
+    const{wr,wb}=wasted(R[d],B[d]);twr+=wr;twb+=wb;
+  }
+  return{eg:(twr-twb)/CELLS,twr,twb,partial:cnt.slice(1).some(c=>c!==CPD)};
+}
+
+function updateCounts(){
+  const s=getStats();const{cnt,R,B}=s;
+  const total=cnt.slice(1).reduce((a,b)=>a+b,0);
+  document.getElementById('prog-fill').style.width=(total/CELLS*100)+'%';
+  document.getElementById('prog-txt').textContent=total+' / 50';
+  document.getElementById('btn-check').disabled=cnt.slice(1).some(c=>c!==CPD);
+  for(let d=1;d<=5;d++){
+    const dc=document.getElementById('dc'+d);dc.textContent=cnt[d]+'/10';dc.className='dcnt'+(cnt[d]===CPD?' full':'');
+    const tm=document.getElementById('tm'+d),tw=document.getElementById('tw'+d);
+    if(!cnt[d]){tm.textContent='–';tw.textContent='–';tw.className='tw none';continue;}
+    tm.textContent=`R:${R[d]} B:${B[d]}`;
+    const w=cnt[d]===CPD?(R[d]>B[d]?'RED':R[d]<B[d]?'BLUE':'TIE'):'?';
+    tw.textContent=w;tw.className='tw '+(w==='RED'?'red':w==='BLUE'?'blue':'none');
+  }
+  if(egVisible)updateEGDisplay(s);
+  const rS=cnt.slice(1).filter((_,i)=>R[i+1]>B[i+1]&&cnt[i+1]===CPD).length;
+  const bS=cnt.slice(1).filter((_,i)=>B[i+1]>R[i+1]&&cnt[i+1]===CPD).length;
+  updateStarHint(rS,bS);
+}
+
+function updateEGDisplay(s){
+  const eg=calcEGLive(s);
+  document.getElementById('wr').textContent=eg?eg.twr:'–';
+  document.getElementById('wb').textContent=eg?eg.twb:'–';
+  const pz=document.getElementById('pz-hint');
+  if(!eg){
+    document.getElementById('eg-score').textContent='–';document.getElementById('eg-score').style.color='var(--muted)';
+    document.getElementById('eg-fill').style.cssText='width:0%;background:var(--border)';
+    document.getElementById('eg-needle').style.left='50%';
+    document.getElementById('eg-sub').textContent='Assign cells to see score';
+    document.getElementById('eg-badge').style.cssText='background:rgba(255,255,255,0.04);color:var(--muted)';
+    document.getElementById('eg-badge').textContent='Start drawing to see the score';
+    pz.classList.remove('show');return;
+  }
+  const pct=eg.eg*100,abs=Math.abs(pct).toFixed(1);
+  document.getElementById('eg-score').textContent=(eg.partial?'~':'')+(pct>0?'+':'')+abs+'%';
+  let col=Math.abs(pct)>10?(pct>0?'var(--red-ui)':'#5c94ff'):Math.abs(pct)>5?'var(--gold)':'var(--green)';
+  document.getElementById('eg-score').style.color=col;
+  document.getElementById('eg-sub').textContent=eg.partial?(pct>1?'Trending Red':pct<-1?'Trending Blue':'Roughly neutral'):(pct>1?'Favours Red':pct<-1?'Favours Blue':'Roughly neutral');
+  const np=Math.min(95,Math.max(5,50+pct*2.5));
+  document.getElementById('eg-needle').style.left=np+'%';
+  const fw=Math.min(48,Math.abs(pct)*2.5)+'%';
+  document.getElementById('eg-fill').style.cssText=`position:absolute;height:100%;width:${fw};background:${col};border-radius:5px;${pct<0?'right:50%':'left:50%'}`;
+  let badge,bg;
+  if(Math.abs(pct)<=5){badge='✅ Fair and balanced';bg='rgba(0,214,143,0.12);color:var(--green)';}
+  else if(Math.abs(pct)<=10){badge='🕵️ Skewed — but under 10%!';bg='rgba(245,166,35,0.12);color:var(--gold)';}
+  else{badge='🚨 Gerrymander detected! (past 10%)';bg='rgba(232,25,44,0.12);color:var(--red-ui)';}
+  document.getElementById('eg-badge').style.cssText=`background:${bg};padding:5px 8px;border-radius:6px;font-size:11px;font-weight:700;text-align:center;margin-top:6px`;
+  document.getElementById('eg-badge').textContent=badge;
+  pz.classList.toggle('show',Math.abs(pct)>5&&Math.abs(pct)<=10);
+}
+
+const challenges={
+  fair:'Draw 5 fair districts reflecting the 60/40 vote. Aim for 3 Blue + 2 Red.',
+  red:'Gerrymander for Red! Red has 40% of voters — can you make them win 3+ seats?',
+  blue:'Gerrymander for Blue! Lock Red out of as many seats as possible.',
+  free:'Free draw! Experiment and watch the Efficiency Gap react live.',
+};
+function setScenario(s){
+  scenario=s;
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('on'));
+  const btn=document.getElementById('s-'+s);if(btn)btn.classList.add('on');
+  document.getElementById('ch-text').textContent=challenges[s];
+  resetStars();resetGrid();
+}
+
+function toggleCB(){
+  cbOn=!cbOn;
+  document.body.classList.toggle('cb',cbOn);
+  document.getElementById('cb-btn').classList.toggle('on',cbOn);
+  document.getElementById('cb-btn').textContent=cbOn?'👁 Default Mode':'👁 Colorblind';
+}
+
+function toggleEGPanel(){
+  egVisible=!egVisible;
+  document.getElementById('eg-panel').classList.toggle('hidden',!egVisible);
+  document.getElementById('eg-panel-title').style.display=egVisible?'':'none';
+  const btn=document.getElementById('eg-btn');
+  btn.textContent=egVisible?'📊 EG Off':'📊 EG On';
+  btn.classList.toggle('on',!egVisible);
+}
+
+function toggleEGExplainer(){
+  const box=document.getElementById('eg-explainer');
+  const btn=document.getElementById('eg-explain-btn');
+  const open=box.style.display==='none'||!box.style.display;
+  box.style.display=open?'block':'none';
+  btn.textContent=open?'▲ Hide':'▼ Show';
+}
+
+function resetStars(){['st1','st2','st3'].forEach(id=>document.getElementById(id).classList.remove('lit'));}
+function updateStarHint(rS,bS){
+  resetStars();
+  if(scenario==='fair'){if(bS>=1&&rS>=1)document.getElementById('st1').classList.add('lit');if(bS>=2&&rS>=1)document.getElementById('st2').classList.add('lit');if(bS===3&&rS===2)document.getElementById('st3').classList.add('lit');}
+  else if(scenario==='red'){if(rS>=1)document.getElementById('st1').classList.add('lit');if(rS>=2)document.getElementById('st2').classList.add('lit');if(rS>=3)document.getElementById('st3').classList.add('lit');}
+  else if(scenario==='blue'){if(bS>=3)document.getElementById('st1').classList.add('lit');if(bS>=4)document.getElementById('st2').classList.add('lit');if(bS>=5)document.getElementById('st3').classList.add('lit');}
+}
+
+function resetGrid(){
+  assignments=new Array(CELLS).fill(0);
+  buildBoard();updateCounts();selectTool(1);resetStars();
+  if(timerOn)resetTimerClock();
+}
+
+function checkResults(){
+  stopTimerClock();
+  const s=getStats();const{cnt,R,B}=s;
+  const ddata=[],redW=[],blueW=[];
+  for(let d=1;d<=5;d++){const w=R[d]>B[d]?'R':'B';ddata.push({d,r:R[d],b:B[d],w});if(w==='R')redW.push(d);else blueW.push(d);}
+  const rT=redW.length,bT=blueW.length;
+  const overall=rT>bT?'RED':rT<bT?'BLUE':'TIE';
+  const eg=calcEG(s);
+  const egPct=eg?Math.abs(eg.eg*100):999;
+  const minorityWon=(scenario==='red'&&rT>=3)||(scenario==='blue'&&bT>=4);
+  const perfectCrime=minorityWon&&egPct<=10;
+
+  let stars=0;
+  if(scenario==='fair'){if(bT>=1&&rT>=1)stars=1;if(bT>=2)stars=2;if(bT===3&&rT===2)stars=3;}
+  else if(scenario==='red'){if(rT>=1)stars=1;if(rT>=2)stars=2;if(rT>=3)stars=3;}
+  else if(scenario==='blue'){if(bT>=3)stars=1;if(bT>=4)stars=2;if(bT>=5)stars=3;}
+  else stars=2;
+  if(perfectCrime)stars=3;
+
+  if(timerOn&&stars>0){streak++;document.getElementById('streak-box').style.display='flex';document.getElementById('streak-num').textContent=streak;}
+  else if(timerOn)streak=0;
+
+  document.getElementById('res-title').textContent=overall==='TIE'?"IT'S A TIE!":overall+' WINS!';
+  document.getElementById('res-title').className='res-title '+(overall==='TIE'?'tie':overall.toLowerCase());
+  document.getElementById('res-sub').textContent=`Blue ${bT} · Red ${rT} districts`;
+
+  ['rs1','rs2','rs3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  for(let i=0;i<stars;i++)setTimeout(()=>document.getElementById(['rs1','rs2','rs3'][i]).classList.add('lit'),(ddata.length*350)+i*200);
+
+  const pc=document.getElementById('perfect-crime');
+  if(perfectCrime){setTimeout(()=>pc.classList.add('show'),(ddata.length*350)+500);}else{pc.classList.remove('show');}
+
+  const achEl=document.getElementById('achievement');let ach=null;
+  if(!perfectCrime){
+    if(scenario==='fair'&&stars===3)ach={icon:'🏛️',name:'Democracy Hero'};
+    else if(scenario==='red'&&rT>=3)ach={icon:'🦊',name:'The Fixer'};
+    else if(scenario==='blue'&&bT===5)ach={icon:'💥',name:'Total Domination'};
+    else if(scenario==='blue'&&bT>=3)ach={icon:'🦅',name:'Blue Sweep'};
+    else if(stars>0)ach={icon:'⭐',name:'Good Effort!'};
+  }
+  if(ach&&!perfectCrime){document.getElementById('ach-icon').textContent=ach.icon;document.getElementById('ach-name').textContent=ach.name;setTimeout(()=>achEl.classList.add('show'),(ddata.length*350)+700);}
+  else achEl.classList.remove('show');
+
+  const headlines={
+    fair:bT===3?['FAIR MAP DRAWN: Districts Reflect Will of the People','DEMOCRACY WINS: Map Matches Popular Vote Exactly']:['ACCIDENTAL GERRYMANDER: Students Discover Fairness Is Hard','MIXED RESULT: Map Does Not Fully Reflect 60/40 Split'],
+    red:rT>=3?perfectCrime?[`PERFECT CRIME: Red Wins ${rT} Seats — Efficiency Gap Within Legal Limits`,`GENIUS MAPMAKER: Red Governs Despite Minority Vote, EG Stays Under 10%`]:[`SHOCK RESULT: Red Wins ${rT} Seats With Just 40% of Votes`]:['GERRYMANDER FAILS: Blue Holds On Despite Rigged Map'],
+    blue:bT===5?['TOTAL SWEEP: Blue Locks Red Out of Every District']:bT>=4&&perfectCrime?[`SMOOTH OPERATOR: Blue Wins ${bT} Seats But Stays Under Radar`]:[`BLUE DOMINANT: Party Wins ${bT} Districts`],
+    free:[`${overall} MAJORITY UNDER UNUSUAL MAP`,`CREATIVE DISTRICTS PRODUCE ${overall} WIN`]
+  };
+  const pool=headlines[scenario]||headlines.free;
+  document.getElementById('news-headline').textContent=pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('news-sub').textContent=`Red: ${rT} seats · Blue: ${bT} seats · Popular vote: Red 40%, Blue 60% · EG: ${eg?(eg.eg*100>0?'+':'')+(eg.eg*100).toFixed(1)+'%':'N/A'}`;
+  setTimeout(()=>document.getElementById('news-box').classList.add('show'),(ddata.length*350)+400);
+
+  const list=document.getElementById('res-dlist');list.innerHTML='';
+  ddata.forEach(({d,r,b,w})=>{
+    const row=document.createElement('div');row.className='res-drow';row.id='rr'+d;
+    row.innerHTML=`<div class="res-ddot" style="background:${DC[d]}"></div><div class="res-dname" style="color:${DC[d]}">District ${d}</div><div class="res-bar"><div class="res-bar-fill" style="background:${w==='R'?'var(--red-ui)':'var(--blue-ui)'}"></div></div><div class="res-dvotes">🔴${r} 🔵${b}</div><div class="res-dwin pend" id="rw${d}">…</div>`;
+    list.appendChild(row);
+  });
+
+  // EG result box — shows toggle button when EG panel was hidden during play
+  const egBox=document.getElementById('eg-res');
+  const egContent=eg
+    ?`<div class="eg-res-grid">
+        <div class="eg-res-stat"><div class="eg-res-num" style="color:var(--red-ui)">${eg.twr}</div><div class="eg-res-desc">Red votes wasted</div></div>
+        <div class="eg-res-stat"><div class="eg-res-num" style="color:#5c94ff">${eg.twb}</div><div class="eg-res-desc">Blue votes wasted</div></div>
+        <div class="eg-res-stat" style="grid-column:1/-1">
+          <div class="eg-res-num" style="color:${egPct>10?'var(--red-ui)':'var(--green)'}">${(eg.eg*100>0?'+':'')+(eg.eg*100).toFixed(1)}%</div>
+          <div class="eg-res-desc">${perfectCrime?'🕵️ Under 10% — could survive a legal challenge!':egPct>10?'🚨 Over 10% — courts would likely strike this down':'✅ Within fair limits'}</div>
+        </div>
+      </div>`
+    :`<p style="color:var(--muted);font-size:12px;padding:4px 0">EG could not be computed.</p>`;
+
+  if(!egVisible){
+    egBox.innerHTML=`
+      <div class="eg-res-header">
+        <div class="eg-res-title">📐 Efficiency Gap</div>
+        <button class="eg-res-toggle" onclick="toggleEGRes()">▼ Show</button>
+      </div>
+      <div class="eg-res-content" id="eg-res-content" style="display:none">${egContent}</div>`;
+  } else {
+    egBox.innerHTML=`
+      <div class="eg-res-header"><div class="eg-res-title">📐 Efficiency Gap</div></div>
+      <div class="eg-res-content">${egContent}</div>`;
+  }
+
+  let msg='',cls='info';
+  if(perfectCrime){msg=`🕵️ The Perfect Gerrymander! You changed the election result while keeping the EG under the 10% legal threshold. In real life, this map would be hard to challenge in court — even though it's rigged. This is exactly how it works in practice.`;cls='good';}
+  else if(scenario==='fair'){
+    if(bT===3&&rT===2){msg='🏛️ Perfect proportional result! Your map reflects the 60/40 vote exactly.';cls='good';}
+    else if(rT>=3){msg=`⚠️ You accidentally gerrymandered for Red! They won ${rT} seats with just 40% of votes. Notice how the EG jumped?`;cls='warn';}
+    else{msg=`Close! A fair map gives Blue 3 and Red 2. Try spreading voters more evenly between districts.`;cls='info';}
+  }else if(scenario==='red'){
+    if(rT>=3){msg=`🦊 Successful gerrymander! Red won ${rT} seats with only 40% of votes — but the EG is over 10%, meaning this map could be challenged in court. Try keeping the EG under 10% for the perfect gerrymander!`;cls='good';}
+    else{msg='Red only got '+rT+' seat(s). Hint: pack Blue voters into 1–2 districts; spread Red voters thinly across the other three.';cls='warn';}
+  }else if(scenario==='blue'){
+    if(bT===5){msg='💥 Total sweep — but with an EG this high it would be struck down in court! Try for a sneakier, lower-EG version.';cls='warn';}
+    else if(bT>=3){msg=`Blue won ${bT} districts. Can you get there while keeping EG under 10%?`;cls='good';}
+    else{msg='Blue only won '+bT+'. Pack Red tighter into fewer districts.';cls='info';}
+  }
+  const fb=document.getElementById('res-feedback');fb.textContent=msg;fb.className='res-feedback show '+cls;
+
+  document.getElementById('res-overlay').classList.add('show');
+  if(stars===3||perfectCrime)setTimeout(fireConfetti,(ddata.length*350)+600);
+
+  ddata.forEach(({d,r,b,w},idx)=>{
+    setTimeout(()=>{
+      const row=document.getElementById('rr'+d);row.classList.add('in');
+      setTimeout(()=>{row.querySelector('.res-bar-fill').style.width=(Math.max(r,b)/(r+b)*100)+'%';},100);
+      setTimeout(()=>{const wEl=document.getElementById('rw'+d);wEl.textContent=w==='R'?'RED':'BLUE';wEl.className='res-dwin '+(w==='R'?'red':'blue');},600);
+    },idx*350);
+  });
+}
+
+function toggleEGRes(){
+  const content=document.getElementById('eg-res-content');
+  const btn=document.querySelector('.eg-res-toggle');
+  if(!content||!btn)return;
+  const open=content.style.display==='none';
+  content.style.display=open?'':'none';
+  btn.textContent=open?'▲ Hide':'▼ Show';
+}
+
+function closeResult(){
+  document.getElementById('res-overlay').classList.remove('show');
+  document.getElementById('news-box').classList.remove('show');
+  document.getElementById('achievement').classList.remove('show');
+  document.getElementById('perfect-crime').classList.remove('show');
+}
+
+function toggleTimer(){timerOn=!timerOn;document.getElementById('tog').className='toggle'+(timerOn?' on':'');if(timerOn)resetTimerClock();else{stopTimerClock();resetTimerDisp();}document.getElementById('streak-box').style.display=timerOn?'flex':'none';}
+function setTimerPreset(s){timerDur=s;timerRem=s;document.querySelectorAll('.tpreset').forEach(b=>b.classList.remove('on'));document.getElementById('tp'+s).classList.add('on');resetTimerDisp();if(timerOn)resetTimerClock();}
+function resetTimerDisp(){const m=Math.floor(timerDur/60),sc=timerDur%60;document.getElementById('tnum').textContent=m+':'+(sc<10?'0':'')+sc;document.getElementById('tnum').classList.remove('alert');}
+function resetTimerClock(){stopTimerClock();timerRem=timerDur;updateTimerDisp();timerTick=setInterval(tick,1000);}
+function stopTimerClock(){if(timerTick){clearInterval(timerTick);timerTick=null;}}
+function tick(){timerRem--;updateTimerDisp();if(timerRem<=0){stopTimerClock();const f=assignments.filter(x=>x>0).length;document.getElementById('tu-sub').textContent=`You assigned ${f} of 50 cells.`;document.getElementById('tu-overlay').classList.add('show');}}
+function updateTimerDisp(){const m=Math.floor(timerRem/60),sc=timerRem%60;const el=document.getElementById('tnum');el.textContent=m+':'+(sc<10?'0':'')+sc;el.classList.toggle('alert',timerRem<=10);}
+function closeTU(){document.getElementById('tu-overlay').classList.remove('show');}
+
+function openTutorial(){tutIdx=0;renderTut();document.getElementById('tut-overlay').classList.add('show');}
+function renderTut(){
+  const step=tutData[tutIdx];
+  document.getElementById('tut-ctr').textContent=`Step ${tutIdx+1} of ${tutData.length}`;
+  document.getElementById('tut-h').textContent=step.h;
+  document.getElementById('tut-content').innerHTML=`<div class="tut-visual">${step.vis}</div><div class="tut-body">${step.body}</div>`;
+  const dots=document.getElementById('tut-dots');dots.innerHTML='';
+  tutData.forEach((_,i)=>{const d=document.createElement('div');d.className='tdot'+(i===tutIdx?' on':'');d.onclick=()=>{tutIdx=i;renderTut();};dots.appendChild(d);});
+  document.getElementById('tbt-prev').style.visibility=tutIdx===0?'hidden':'visible';
+  const last=tutIdx===tutData.length-1;
+  document.getElementById('tbt-next').textContent=last?'Start Playing →':'Next →';
+  document.getElementById('tbt-next').className='tbt '+(last?'finish':'next');
+}
+function tutNav(dir){if(dir>0&&tutIdx===tutData.length-1){document.getElementById('tut-overlay').classList.remove('show');return;}tutIdx=Math.max(0,Math.min(tutData.length-1,tutIdx+dir));renderTut();}
+
+function fireConfetti(){const cv=document.getElementById('confetti');const W=cv.width=window.innerWidth,H=cv.height=window.innerHeight;const ctx=cv.getContext('2d');const cols=['#D91A2A','#0f4fd4','#F5A623','#00D68F','#FF2D9B','#F5C400','#FF5C00','#9B2BF5'];const ps=[];for(let i=0;i<160;i++)ps.push({x:Math.random()*W,y:-20-Math.random()*200,vx:(Math.random()-0.5)*4,vy:3+Math.random()*4,rot:Math.random()*360,vr:(Math.random()-0.5)*8,w:8+Math.random()*8,h:4+Math.random()*5,c:cols[Math.floor(Math.random()*cols.length)]});let f=0;function draw(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-f/120);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=0.05;});f++;if(f<130)requestAnimationFrame(draw);else ctx.clearRect(0,0,W,H);}draw();}
+
+buildBoard();buildBrushes();buildTally();updateCounts();openTutorial();
+</script>
+</body>
+</html>
