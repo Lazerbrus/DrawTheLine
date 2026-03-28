@@ -471,8 +471,13 @@ body.light .mob-brush.on{border-color:#333;box-shadow:0 0 8px rgba(0,0,0,0.15);}
 
 /* Mobile center area */
 body.mobile .center{padding:4px 8px;gap:4px;align-items:center;}
-body.mobile .challenge-banner{padding:4px 10px;max-width:100%;}
+body.mobile .challenge-banner{padding:0;max-width:100%;cursor:pointer;overflow:hidden;}
+body.mobile .ch-header{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;}
 body.mobile .ch-label{font-size:7px;margin-bottom:0;}
+body.mobile .ch-arrow{font-size:9px;color:var(--muted);transition:transform 0.2s;}
+body.mobile .ch-arrow.collapsed{transform:rotate(-90deg);}
+body.mobile .ch-body{padding:0 10px 6px;transition:max-height 0.25s ease,opacity 0.2s;max-height:200px;opacity:1;overflow:hidden;}
+body.mobile .ch-body.collapsed{max-height:0;padding:0 10px;opacity:0;}
 body.mobile .ch-text{font-size:10px;}
 body.mobile .star-rating{gap:2px;margin-top:1px;}
 body.mobile .star-rating .star{font-size:12px;}
@@ -640,10 +645,15 @@ body.mobile .mob-tally{display:block;}
 
   <!-- CENTER -->
   <div class="center">
-    <div class="challenge-banner">
-      <div class="ch-label">Your Mission</div>
-      <div class="ch-text" id="ch-text">Draw 5 fair districts reflecting the 60/40 popular vote split. Aim for 3 Blue + 2 Red.</div>
-      <div class="star-rating"><span class="star" id="st1">⭐</span><span class="star" id="st2">⭐</span><span class="star" id="st3">⭐</span></div>
+    <div class="challenge-banner" id="challenge-banner">
+      <div class="ch-header" onclick="toggleMission()">
+        <div class="ch-label">Your Mission</div>
+        <span class="ch-arrow" id="ch-arrow">▼</span>
+      </div>
+      <div class="ch-body" id="ch-body">
+        <div class="ch-text" id="ch-text">Draw 5 fair districts reflecting the 60/40 popular vote split. Aim for 3 Blue + 2 Red.</div>
+        <div class="star-rating"><span class="star" id="st1">⭐</span><span class="star" id="st2">⭐</span><span class="star" id="st3">⭐</span></div>
+      </div>
     </div>
     <div class="board" id="board" onmouseleave="stopPaint()"></div>
     <div class="prog-wrap">
@@ -807,7 +817,7 @@ const tutData=[
    vis:`<div style="text-align:center"><div style="font-size:52px;animation:wobble 2s ease-in-out infinite">🦎</div><div style="font-size:11px;color:var(--muted);margin-top:8px">The original "Gerry-mander" district, 1812</div></div><style>@keyframes wobble{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}</style>`},
 
   {h:'The Rules of the Game',
-   body:`In this game, <strong style="color:#5c94ff">Blue has 60%</strong> of voters and <strong style="color:var(--red-ui)">Red has 40%</strong>. A fair map gives Blue 3 seats and Red 2.<br><br>Your job: draw <strong>5 districts</strong> of 10 cells each. By drawing the lines cleverly, the minority party can steal the majority — that's gerrymandering.<br><br>Two classic tricks:<br>🟥 <strong>Packing</strong> — cram opponents into a few districts so they win big but waste votes.<br>💛 <strong>Cracking</strong> — split opponents across many districts so they always lose.`,
+   body:`In this game, <strong style="color:#5c94ff">Blue has 60%</strong> of voters and <strong style="color:var(--red-ui)">Red has 40%</strong>. A fair map gives Blue 3 seats and Red 2.<br><br>Your job: draw <strong>5 districts</strong> of 10 cells each. By drawing the lines cleverly, the minority party can steal the majority — that's gerrymandering.<br><br>Two classic tricks:<br>📦 <strong>Packing</strong> — cram opponents into a few districts so they win big but waste votes.<br>⚡ <strong>Cracking</strong> — split opponents across many districts so they always lose.`,
    vis:`<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:center"><div><div class="mg">${[...Array(20)].map((_,i)=>`<div class="mc ${i<8?'r':'b'}"><div class="mc-l">${i<8?'R':'B'}</div></div>`).join('')}</div><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:5px">50 voters → 5 districts</div></div><div style="font-size:24px">→</div><div style="text-align:center"><div style="font-family:'Archivo Black',sans-serif;font-size:18px;color:#5c94ff">3 Blue</div><div style="color:var(--muted);font-size:11px">+</div><div style="font-family:'Archivo Black',sans-serif;font-size:18px;color:var(--red-ui)">2 Red</div><div style="font-size:10px;color:var(--muted);margin-top:3px">= fair result</div></div></div>`},
 
   {h:'How to Play',
@@ -1534,6 +1544,14 @@ function updateMobEGSlider(s){
   if(Math.abs(pct) <= 5) hint.textContent = '✅ Fair';
   else if(Math.abs(pct) <= 10) hint.textContent = '🕵️ Skewed but under 10%';
   else hint.textContent = '🚨 Gerrymander! Over 10%';
+}
+
+function toggleMission(){
+  if(!mobileMode) return;
+  const body = document.getElementById('ch-body');
+  const arrow = document.getElementById('ch-arrow');
+  body.classList.toggle('collapsed');
+  arrow.classList.toggle('collapsed');
 }
 
 function toggleMobTally(){
