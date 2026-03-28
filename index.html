@@ -437,8 +437,8 @@ body.light .landing-btn:hover{box-shadow:0 8px 30px rgba(0,0,0,0.1);}
 
 /* ===== MOBILE MODE ===== */
 body.mobile header{padding:4px 10px;flex-direction:column;align-items:center;gap:2px;}
-body.mobile .logo{font-size:14px;text-align:center;}
-body.mobile .logo-tag{font-size:6px;letter-spacing:1.5px;text-align:center;}
+body.mobile .logo{font-size:20px;text-align:center;}
+body.mobile .logo-tag{display:none;}
 body.mobile .header-right{justify-content:center;gap:3px;width:100%;align-items:center;flex-wrap:nowrap;}
 body.mobile .header-right .sbtn{font-size:9px;padding:3px 8px;border-radius:14px;}
 body.mobile .header-right .util-btn{display:none;}
@@ -514,6 +514,17 @@ body.mobile .mob-tally{display:block;}
 .mob-tally-votes{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);}
 .mob-tally-win{font-size:10px;font-weight:800;}
 .mob-tally-win.red{color:var(--red-ui);}.mob-tally-win.blue{color:#5c94ff;}.mob-tally-win.none{color:var(--muted);}
+
+/* Mobile EG slider (simplified) */
+.mob-eg{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
+.mob-eg-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.mob-eg-track{position:relative;width:100%;height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
+.mob-eg-center{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--muted);opacity:0.5;z-index:1;}
+.mob-eg-fill{position:absolute;height:100%;border-radius:5px;transition:all 0.3s;}
+.mob-eg-needle{position:absolute;top:-2px;width:3px;height:14px;background:var(--text);border-radius:2px;transform:translateX(-50%);transition:left 0.3s;z-index:2;}
+.mob-eg-val{display:flex;justify-content:space-between;align-items:center;margin-top:3px;}
+.mob-eg-score{font-family:'Archivo Black',sans-serif;font-size:14px;line-height:1;}
+.mob-eg-hint{font-size:9px;color:var(--muted);text-align:right;max-width:60%;}
 .mob-stats{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;justify-content:space-around;font-size:10px;color:var(--muted);}
 .mob-stats b{color:var(--text);}
 </style>
@@ -666,6 +677,18 @@ body.mobile .mob-tally{display:block;}
       <span class="arrow">▼</span>
     </div>
     <div class="mob-tally-content" id="mob-tally-content"></div>
+    <div class="mob-eg" id="mob-eg-slider" style="display:none;">
+      <div class="mob-eg-label">Efficiency Gap</div>
+      <div class="mob-eg-track">
+        <div class="mob-eg-center"></div>
+        <div class="mob-eg-fill" id="mob-eg-fill"></div>
+        <div class="mob-eg-needle" id="mob-eg-needle" style="left:50%"></div>
+      </div>
+      <div class="mob-eg-val">
+        <div class="mob-eg-score" id="mob-eg-score" style="color:var(--muted)">–</div>
+        <div class="mob-eg-hint" id="mob-eg-hint">Assign cells to see score</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1480,6 +1503,37 @@ function updateMobTallyContent(){
   }
   html += `<div class="mob-stats"><span>🔴 Red <b>20</b> (40%)</span><span>🔵 Blue <b>30</b> (60%)</span></div>`;
   el.innerHTML = html;
+  updateMobEGSlider(s);
+}
+
+function updateMobEGSlider(s){
+  const wrap = document.getElementById('mob-eg-slider');
+  if(!wrap) return;
+  wrap.style.display = egVisible ? 'block' : 'none';
+  if(!egVisible) return;
+  const eg = calcEGLive(s);
+  const score = document.getElementById('mob-eg-score');
+  const fill = document.getElementById('mob-eg-fill');
+  const needle = document.getElementById('mob-eg-needle');
+  const hint = document.getElementById('mob-eg-hint');
+  if(!eg){
+    score.textContent = '–'; score.style.color = 'var(--muted)';
+    fill.style.cssText = 'width:0%;background:var(--border)';
+    needle.style.left = '50%';
+    hint.textContent = 'Assign cells to see score';
+    return;
+  }
+  const pct = eg.eg * 100, abs = Math.abs(pct).toFixed(1);
+  score.textContent = (eg.partial ? '~' : '') + (pct > 0 ? '+' : '') + abs + '%';
+  let col = Math.abs(pct) > 10 ? (pct > 0 ? 'var(--red-ui)' : '#5c94ff') : Math.abs(pct) > 5 ? 'var(--gold)' : 'var(--green)';
+  score.style.color = col;
+  const np = Math.min(95, Math.max(5, 50 + pct * 2.5));
+  needle.style.left = np + '%';
+  const fw = Math.min(48, Math.abs(pct) * 2.5) + '%';
+  fill.style.cssText = `position:absolute;height:100%;width:${fw};background:${col};border-radius:5px;${pct < 0 ? 'right:50%' : 'left:50%'}`;
+  if(Math.abs(pct) <= 5) hint.textContent = '✅ Fair';
+  else if(Math.abs(pct) <= 10) hint.textContent = '🕵️ Skewed but under 10%';
+  else hint.textContent = '🚨 Gerrymander! Over 10%';
 }
 
 function toggleMobTally(){
