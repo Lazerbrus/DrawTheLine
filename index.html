@@ -471,13 +471,18 @@ body.light .mob-brush.on{border-color:#333;box-shadow:0 0 8px rgba(0,0,0,0.15);}
 
 /* Mobile center area */
 body.mobile .center{padding:4px 8px;gap:4px;align-items:center;}
-body.mobile .challenge-banner{padding:0;max-width:100%;cursor:pointer;overflow:hidden;}
-body.mobile .ch-header{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;}
-body.mobile .ch-label{font-size:7px;margin-bottom:0;}
-body.mobile .ch-arrow{font-size:9px;color:var(--muted);transition:transform 0.2s;}
+/* Desktop: arrow hidden, ch-header is just a plain wrapper */
+.ch-arrow{display:none;}
+.ch-header{pointer-events:none;}
+
+/* Mobile: collapsible mission */
+body.mobile .challenge-banner{padding:0;max-width:100%;overflow:hidden;}
+body.mobile .ch-header{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+body.mobile .ch-label{font-size:8px;margin-bottom:0;font-weight:800;}
+body.mobile .ch-arrow{display:inline-block;font-size:10px;color:var(--muted);transition:transform 0.25s;}
 body.mobile .ch-arrow.collapsed{transform:rotate(-90deg);}
-body.mobile .ch-body{padding:0 10px 6px;transition:max-height 0.25s ease,opacity 0.2s;max-height:200px;opacity:1;overflow:hidden;}
-body.mobile .ch-body.collapsed{max-height:0;padding:0 10px;opacity:0;}
+body.mobile .ch-body{padding:0 10px 6px;max-height:200px;opacity:1;overflow:hidden;transition:max-height 0.3s ease,opacity 0.25s,padding 0.3s;}
+body.mobile .ch-body.collapsed{max-height:0;padding-top:0;padding-bottom:0;opacity:0;}
 body.mobile .ch-text{font-size:10px;}
 body.mobile .star-rating{gap:2px;margin-top:1px;}
 body.mobile .star-rating .star{font-size:12px;}
