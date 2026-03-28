@@ -454,7 +454,7 @@ body.light .mob-settings-dd{box-shadow:0 8px 24px rgba(0,0,0,0.1);}
 .mob-settings-dd.open{display:flex;}
 .mob-settings-dd .util-btn{display:flex !important;width:100%;justify-content:flex-start;font-size:10px;padding:6px 10px;border-radius:6px;}
 
-body.mobile .main{flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+body.mobile .main{flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
 body.mobile .left-panel,body.mobile .right-panel{display:none !important;}
 
 /* Mobile toolbar */
@@ -477,9 +477,19 @@ body.mobile .ch-text{font-size:10px;}
 body.mobile .star-rating{gap:2px;margin-top:1px;}
 body.mobile .star-rating .star{font-size:12px;}
 
-body.mobile .board{grid-template-columns:repeat(5,calc((100vw - 60px)/5));grid-template-rows:repeat(10,calc((100vw - 60px)/5 * 0.82));gap:2px;padding:5px;border-radius:10px;max-width:calc(100vw - 16px);}
+/* Cell size: pick the smaller of width-based or height-based so full board fits if possible.
+   Height budget: 100vh minus ~210px for header+toolbar+banner+progress+buttons.
+   Width budget: 100vw minus 40px for padding.
+   10 rows + gaps ≈ cell-h * 10 + 28px. 5 cols + gaps ≈ cell-w * 5 + 18px. */
+body.mobile .board{
+  --mob-cell-w:min(calc((100vw - 40px) / 5), calc((100vh - 240px) / 10 * 1.1));
+  --mob-cell-h:min(calc((100vw - 40px) / 5 * 0.82), calc((100vh - 240px) / 10));
+  grid-template-columns:repeat(5,var(--mob-cell-w));
+  grid-template-rows:repeat(10,var(--mob-cell-h));
+  gap:2px;padding:5px;border-radius:10px;max-width:calc(100vw - 16px);
+}
 body.mobile .cell{border-radius:4px;border-width:2px;}
-body.mobile .cell .vlet{font-size:clamp(10px,3vw,14px);}
+body.mobile .cell .vlet{font-size:clamp(9px,var(--mob-cell-w) * 0.28,14px);}
 body.mobile .cell .d-badge{width:11px;height:11px;font-size:7px;top:1px;left:1px;border-radius:2px;}
 
 body.mobile .prog-wrap{max-width:240px;}
