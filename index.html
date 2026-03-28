@@ -482,8 +482,8 @@ body.mobile .star-rating .star{font-size:12px;}
    Width budget: 100vw minus 40px for padding.
    10 rows + gaps ≈ cell-h * 10 + 28px. 5 cols + gaps ≈ cell-w * 5 + 18px. */
 body.mobile .board{
-  --mob-cell-w:min(calc((100vw - 40px) / 5), calc((100vh - 240px) / 10 * 1.1));
-  --mob-cell-h:min(calc((100vw - 40px) / 5 * 0.82), calc((100vh - 240px) / 10));
+  --mob-cell-w:min(calc((100vw - 100px) / 5), calc((100vh - 240px) / 10 * 1.1));
+  --mob-cell-h:min(calc((100vw - 100px) / 5 * 0.82), calc((100vh - 240px) / 10));
   grid-template-columns:repeat(5,var(--mob-cell-w));
   grid-template-rows:repeat(10,var(--mob-cell-h));
   gap:2px;padding:5px;border-radius:10px;max-width:calc(100vw - 16px);
@@ -978,8 +978,26 @@ function selectTool(t){
   updateMobToolbar();
 }
 
-function startPaint(i){painting=true;paintCell(i);}
-function stopPaint(){painting=false;}
+/* Double-click/tap and hold to erase */
+let lastTapTime=0, erasingViaDbl=false, preEraseTool=null;
+
+function startPaint(i){
+  const now=Date.now();
+  if(now-lastTapTime<350){
+    // Double-tap detected → switch to eraser temporarily
+    if(selTool!=='eraser'){preEraseTool=selTool;selectTool('eraser');}
+    erasingViaDbl=true;
+  }
+  lastTapTime=now;
+  painting=true;paintCell(i);
+}
+function stopPaint(){
+  painting=false;
+  if(erasingViaDbl&&preEraseTool!==null){
+    selectTool(preEraseTool);
+    preEraseTool=null;erasingViaDbl=false;
+  }
+}
 
 function paintCell(i){
   if(!painting)return;
